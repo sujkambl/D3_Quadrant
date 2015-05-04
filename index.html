@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.invis {
+  fill: white;
+}  
+  
+.grid {
+  stroke-width: 0.5px;
+  stroke: steelblue;
+  fill: none;
+  opacity: 0.5;
+}
+
+.axis {
+  stroke-width: 2px;
+  stroke: black;
+  fill: none;
+}
+
+g.item circle {
+  fill: maroon;
+  stroke: none;
+}
+
+svg {
+  border: 1px solid #ccc;
+}
+
+text {
+  font: 10px sans-serif;
+  fill: navy;
+}
+  
+.xlabel{
+    font: 14px sans-serif;
+  fill: navy;
+}
+  
+   
+.titlelabel{
+    font: 18px sans-serif;
+  fill: navy;
+} 
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+  
+//Data - x and y can be anything positive or negative
+//z can be a number (to denote dot size) or a category class (all alike features will be given same color)
+var data = [
+{x:88.8893474761649,y:96.83224361339,z:4,label:'Adams '},
+{x:68.6353818426954,y:92.3274245106357,z:4,label:'Alamosa '},
+{x:101.323482878644,y:98.724988112527,z:4,label:'Arapahoe '},
+{x:80.0996051563553,y:90.7128277200863,z:4,label:'Archuleta '},
+{x:66.1466286956402,y:83.0526846833904,z:4,label:'Baca '},
+{x:58.6047023539285,y:84.5160978596602,z:4,label:'Bent '},
+{x:127.487721325684,y:105.388092614466,z:4,label:'Boulder '},
+{x:133.155860057507,y:103.993890020367,z:4,label:'Broomfield '},
+{x:82.0380535721656,y:96.372900500271,z:4,label:'Chaffee '},
+{x:87.9634597658453,y:85.4492402130849,z:4,label:'Cheyenne '},
+{x:123.244871847786,y:101.729120605985,z:4,label:'Clear Creek '},
+{x:60.9985279348439,y:85.2076681478301,z:4,label:'Conejos '},
+{x:57.1642797198949,y:88.6683941533608,z:4,label:'Costilla '},
+{x:56.7776906461953,y:84.4134389428472,z:4,label:'Crowley '},
+{x:68.7880914056159,y:94.3910353281347,z:4,label:'Custer '},
+{x:70.9053888590807,y:94.733194175395,z:4,label:'Delta '},
+{x:87.6429072598952,y:109.566187536091,z:4,label:'Denver '},
+{x:71.3676448333265,y:89.4969418164291,z:4,label:'Dolores '},
+{x:155.364783248724,y:101.266798830223,z:4,label:'Douglas '},
+{x:118.545269442954,y:109.796330094069,z:4,label:'Eagle '},
+{x:123.341175175754,y:96.5903436140707,z:4,label:'Elbert '},
+{x:97.304882578728,y:98.6352566533312,z:4,label:'El Paso '},
+{x:66.8936673683052,y:92.1877452371283,z:4,label:'Fremont '},
+{x:92.0948725356666,y:102.951251258918,z:4,label:'Garfield '},
+{x:120.570390853935,y:96.2362491115743,z:4,label:'Gilpin '},
+{x:102.381443724462,y:105.94659010925,z:4,label:'Grand '},
+{x:92.2407032894465,y:102.545821187839,z:4,label:'Gunnison '},
+{x:104.557898936536,y:103.932786515126,z:4,label:'Hinsdale '},
+{x:57.5921416484378,y:87.51619073138,z:4,label:'Huerfano '},
+{x:83.5280036320112,y:91.3116057027918,z:4,label:'Jackson '},
+{x:116.880597630938,y:102.050912855195,z:4,label:'Jefferson '},
+{x:76.9573651409468,y:82.3594054704967,z:4,label:'Kiowa '},
+{x:79.1585840659265,y:90.6969705390269,z:4,label:'Kit Carson '},
+{x:78.7857526105081,y:101.313642005741,z:4,label:'Lake '},
+{x:93.1831001417035,y:103.11840229364,z:4,label:'La Plata '},
+{x:104.82479673119,y:98.4207720307789,z:4,label:'Larimer '},
+{x:73.0378196926548,y:88.050443199134,z:4,label:'Las Animas '},
+{x:71.3676448333265,y:87.3299321052859,z:4,label:'Lincoln '},
+{x:68.7880914056159,y:92.7060756161623,z:4,label:'Logan '},
+{x:83.280366502951,y:93.653554562575,z:4,label:'Mesa '},
+{x:94.1543879923508,y:98.2118091225416,z:4,label:'Mineral '},
+{x:94.6826805343459,y:97.5030515103595,z:4,label:'Moffat '},
+{x:67.7493912253911,y:92.6343781654606,z:4,label:'Montezuma '},
+{x:76.8335465764167,y:92.842599321027,z:4,label:'Montrose '},
+{x:69.0659952948945,y:94.9171316857873,z:4,label:'Morgan '},
+{x:57.7035783565149,y:85.5426549091641,z:4,label:'Otero '},
+{x:99.3699010827246,y:101.519797671058,z:4,label:'Ouray '},
+{x:104.70097816666,y:100.029921442812,z:4,label:'Park '},
+{x:75.0932078638546,y:89.0424380421359,z:4,label:'Phillips '},
+{x:129.295472367824,y:192.613027749702,z:4,label:'Pitkin '},
+{x:61.195261876264,y:83.8922759180377,z:4,label:'Prowers '},
+{x:72.5095271506597,y:93.1034195383797,z:4,label:'Pueblo '},
+{x:104.527632176318,y:93.5413200448563,z:4,label:'Rio Blanco '},
+{x:62.3866716194092,y:92.5026629771151,z:4,label:'Rio Grande '},
+{x:102.575426142226,y:110.612378395165,z:4,label:'Routt '},
+{x:56.6181022741343,y:87.586494644247,z:4,label:'Saguache '},
+{x:73.1822746846066,y:100.197552432534,z:4,label:'San Juan '},
+{x:106.907700138952,y:110.515766968954,z:4,label:'San Miguel '},
+{x:73.603257804009,y:87.1103280295653,z:4,label:'Sedgwick '},
+{x:109.26300438868,y:121.985739027718,z:4,label:'Summit '},
+{x:100.952027185054,y:96.7182144794295,z:4,label:'Teller '},
+{x:76.5006122140135,y:87.2595456807304,z:4,label:'Washington '},
+{x:91.9559205910273,y:93.7244067739753,z:4,label:'Weld '},
+{x:73.6060093276652,y:87.1064786861444,z:4,label:'Yuma '}
+];
+  
+var setup = {
+  xaxis: 100,
+  yaxis: 100,
+  title: "Median Family Income by Cost of Living",
+  xlabel: "Median Family Income Index",
+  ylabel: "Cost of Living Index",
+  topspace: 60,
+  lbuffer: 70,
+  rbuffer: 40,
+  bottomspace: 60
+} ; 
+  
+  
+//Options
+var width = 600,
+    height = 480,
+    dotRadius = 4, //in absence of size as z
+    gridSpacing = 10,
+    topspace = setup.topspace,
+    lbuffer= setup.lbuffer,
+    rbuffer= setup.rbuffer;
+    bottomspace= setup.bottomspace;  
+
+//min and max data values (for setting up axis)  
+var min_x = d3.min(data, function(d) {
+  return d.x;
+});
+var min_y = d3.min(data, function(d) {
+  return d.y;
+});
+var max_x = d3.max(data, function(d) {
+  return d.x;
+});
+var max_y = d3.max(data, function(d) {
+  return d.y;
+});
+  
+  
+var min_size, max_size, no_z=false;
+  
+if(!data[0].z){
+  no_z=true;
+}else{
+// dot size range  
+  min_size = d3.min(data, function(d) {
+    return d.z;
+  });
+  max_size = d3.max(data, function(d) {
+    return d.z;
+  });
+  var cscale = d3.scale.linear().domain([min_size,max_size]).range([3,8]);
+}
+  
+//buffer the axis ranges so that points arent on edge of graph  
+var buffer_x = (Math.abs(min_x)+Math.abs(max_x))*.05; //5% buffer
+var buffer_y = (Math.abs(min_y)+Math.abs(max_y))*.05; //5% buffer  
+  
+var svg = d3.select("body").append("svg")
+    .attr("width",width+lbuffer+rbuffer)
+    .attr("height",height+bottomspace+topspace);
+
+//Scales for item positions
+var x = d3.scale.linear().domain([min_x-buffer_x,max_x+buffer_x]).range([lbuffer,width+lbuffer]);
+var y = d3.scale.linear().domain([min_y-buffer_y,max_y+buffer_y]).range([height+topspace,topspace]);
+
+
+//gridlines
+svg.append("path")
+  .attr("class","grid")
+  .attr("d",function() {
+    var d = "";
+
+    for (var i = lbuffer; i < width+lbuffer+gridSpacing; i += gridSpacing ) {
+      d += "M"+(i)+","+0+topspace+" L"+i+","+(height+topspace);
+    }
+
+    for (var i = 0; i < height+gridSpacing; i += gridSpacing ) {
+      d += "M"+lbuffer+","+(i+topspace)+" L"+(width+lbuffer)+","+(i+topspace);
+    }
+
+    return d;
+  })
+
+//x axis
+svg.append("path")
+  .attr("class","axis")
+  .attr("d","M"+lbuffer+","+(((y(setup.yaxis)))+0)+" L"+(width+lbuffer)+","+(((y(setup.yaxis)+0))));
+
+  var xAxis = d3.svg.axis().scale(x).orient("bottom"); //
+
+//y axis
+svg.append("path")
+  .attr("class","axis")
+  .attr("d","M"+(x(setup.xaxis))+","+topspace+" L"+(x(setup.xaxis))+","+(height+topspace)); //
+
+var yAxis = d3.svg.axis().scale(y).orient("left"); //
+
+  
+  
+  svg.append("g").attr("class", "invis") //
+    .attr("transform", "translate("+0+"," + (height+topspace) + ")") //
+    .call(xAxis); //
+  
+  svg.append("g")
+      .attr("class", "invis")
+      .attr("transform", "translate("+lbuffer+", "+0+")")
+      .call(yAxis);
+  
+
+//One group per item
+var items = svg.selectAll("g.item").data(data).enter().append("g")
+  .attr("class","item");
+
+//Add a dot
+items.append("circle")
+  .attr("r", function(d){
+  if(no_z){return dotRadius;}else{return cscale(d.z);}
+})
+  .attr("cx",function(d){
+    return x(d.x);
+  })
+  .attr("cy",function(d){
+    return y(d.y);
+  });
+
+//Add a label
+//would need to use .getBBox() to make sure this doesn't hit the sides
+items.append("text")
+  .attr("x",function(d){
+    return x(d.x);
+  })
+  .attr("y",function(d){
+    return y(d.y);
+  })
+  .attr("dy","1.25em")
+  .attr("text-anchor","middle")
+  .text(function(d){return d.label;});
+
+  //xaxis
+svg.append("text")
+    .attr("class", "xlabel")
+    .attr("text-anchor", "middle")
+    .attr("x", ((width-rbuffer)/2)+lbuffer)
+    .attr("y", (height+bottomspace+topspace) - 7)
+    .text(setup.xlabel);  
+  
+  //yaxis
+svg.append("text")
+    .attr("class", "xlabel")
+    .attr("text-anchor", "middle")
+    .attr("y", 18)
+    .attr("x", -((height/2)+(topspace)))
+    .attr("transform", "rotate(-90)")
+    .text(setup.ylabel);  
+  
+  //title
+svg.append("text")
+    .attr("class", "titlelabel")
+    .attr("text-anchor", "middle")
+    .attr("x", ((width-rbuffer)/2)+lbuffer)
+    .attr("y", (topspace/2)+5)
+    .text(setup.title);    
+  
+  
+</script>
