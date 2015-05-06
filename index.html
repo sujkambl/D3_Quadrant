@@ -79,8 +79,6 @@ var data = [
 ];
   
 var setup = {
-  width: 1000,
-  height: 600,
   quadrantxaxis: 100,
   quadrantyaxis: 100,
   title: "Median Family Income by Cost of Living",
@@ -94,8 +92,8 @@ var setup = {
   function createQuadrantChart(data,setup){
   
 //Options
-var width = setup.width || 800,
-    height = setup.height || 480,
+var width = setup.width || 1200,
+    height = setup.height || 600,
     dotRadius = setup.dotRadius || 6, 
     gridSpacing = setup.gridSpacing || 10,
     topspace = setup.topspace || 60,
@@ -195,17 +193,17 @@ if(!data[0].category){
 }    
   
 //buffer the axis ranges so that points arent on edge of graph  
-var buffer_x = (Math.abs(min_x)+Math.abs(max_x))*.05; //5% buffer
-var buffer_y = (Math.abs(min_y)+Math.abs(max_y))*.05; //5% buffer  
+var buffer_x = (Math.abs(min_x)+Math.abs(max_x))*.01; //1% buffer
+var buffer_y = (Math.abs(min_y)+Math.abs(max_y))*.01; //1% buffer  
   
 var svg = d3.select("body").append("svg")
-    .attr("width",width+lbuffer+rbuffer)
-    .attr("height",height+bottomspace+topspace)
+    .attr("width",width) //+lbuffer+rbuffer
+    .attr("height",height) //+bottomspace+topspace
     .style({'border': svgborderwidth+'solid'+svgbordercolor});
 
 //Scales for item positions
-var x = d3.scale.linear().domain([min_x-buffer_x,max_x+buffer_x]).range([lbuffer,width+lbuffer]);
-var y = d3.scale.linear().domain([min_y-buffer_y,max_y+buffer_y]).range([height+topspace,topspace]);
+var x = d3.scale.linear().domain([min_x-buffer_x,max_x+buffer_x]).range([lbuffer,(width-rbuffer)]);
+var y = d3.scale.linear().domain([min_y-buffer_y,max_y+buffer_y]).range([height-bottomspace,topspace]);
 
 
 //gridlines
@@ -213,12 +211,12 @@ svg.append("path")
   .attr("d",function() {
     var d = "";
 
-    for (var i = lbuffer; i < width+lbuffer+gridSpacing; i += gridSpacing ) {
-      d += "M"+(i)+","+0+topspace+" L"+i+","+(height+topspace);
+    for (var i = lbuffer; i < (width-rbuffer)+gridSpacing; i += gridSpacing ) {
+      d += "M"+(i)+","+topspace+" L"+i+","+(height-bottomspace);
     }
 
-    for (var i = 0; i < height+gridSpacing; i += gridSpacing ) {
-      d += "M"+lbuffer+","+(i+topspace)+" L"+(width+lbuffer)+","+(i+topspace);
+    for (var i = topspace; i < (height-bottomspace)+gridSpacing; i += gridSpacing ) {
+      d += "M"+lbuffer+","+(i)+" L"+(width-rbuffer)+","+(i);
     }
 
     return d;
@@ -227,13 +225,13 @@ svg.append("path")
 
 //quadrant axes
 svg.append("path")
-  .attr("d","M"+lbuffer+","+(((y(quadrantyaxis)))+0)+" L"+(width+lbuffer)+","+(((y(quadrantyaxis)+0))))
+  .attr("d","M"+lbuffer+","+(((y(quadrantyaxis)))+0)+" L"+(width-rbuffer)+","+(((y(quadrantyaxis)+0))))
   .attr("stroke", quadrantaxiscolor)
   .attr("stroke-width", quadrantaxiswidth)
   .attr('opacity', quadrantaxisopacity);
 
 svg.append("path")
-  .attr("d","M"+(x(quadrantxaxis))+","+topspace+" L"+(x(quadrantxaxis))+","+(height+topspace))
+  .attr("d","M"+(x(quadrantxaxis))+","+topspace+" L"+(x(quadrantxaxis))+","+(height-bottomspace))
   .attr("stroke", quadrantaxiscolor)
   .attr("stroke-width", quadrantaxiswidth)
   .attr('opacity', quadrantaxisopacity);
@@ -244,7 +242,7 @@ svg.append("path")
  
   var xAxisGroup = svg.append("g") //
     .attr("class", "xaxis")
-    .attr("transform", "translate("+0+"," + (height+topspace) + ")")
+    .attr("transform", "translate("+0+"," + (height-topspace) + ")")
     .call(xAxis);
 
       
@@ -318,8 +316,8 @@ var textLabels = items.append("text")
   //xaxis
 svg.append("text")
     .attr("text-anchor", "middle")
-    .attr("x", ((width-rbuffer)/2)+lbuffer)
-    .attr("y", (height+bottomspace+topspace) - 10)
+    .attr("x", ((width-rbuffer-lbuffer)/2)+lbuffer)
+    .attr("y", (height - 10))
     .text(setup.xlabel)
 .style({'font-size': axislabelsize, 'fill': axislabelcolor});  
   
@@ -327,7 +325,7 @@ svg.append("text")
 svg.append("text")
     .attr("text-anchor", "middle")
     .attr("y", 27)
-    .attr("x", -((height/2)+(topspace)))
+    .attr("x", -(((height-bottomspace-topspace)/2)+(topspace)))
     .attr("transform", "rotate(-90)")
     .text(setup.ylabel)
   .style({'font-size': axislabelsize, 'fill': axislabelcolor});    
@@ -335,7 +333,7 @@ svg.append("text")
   //title
 svg.append("text")
     .attr("text-anchor", "middle")
-    .attr("x", ((width-rbuffer)/2)+lbuffer)
+    .attr("x", ((width-rbuffer-lbuffer)/2)+lbuffer)
     .attr("y", (topspace/2)+5)
     .text(setup.title)  
   .style({'font-size': titlefontsize, 'fill': titlefontcolor});    
