@@ -1,16 +1,55 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 svg{
-  shape-rendering: optimizeQuality; 
+  shape-rendering: geometricPrecision; 
 }
-</style>  
+  
+.spacer{
+  padding-top: 20px;
+}
+    
+.spacerbig{
+  padding-top: 40px;
+}
 
+</style>  
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 <body>
+
+<div class="container">
+<div class="row" style="padding-top: 20px;">
+          
+          <div class="col-md-9"><div id="svgcontainer"></div></div>
+          <div class="col-md-3">
+            <label for="selectx">Geography</label><br />
+            <select class="varselect" id="selectgeo"><option>Colorado Counties</option></select>            
+            <div class="spacerbig"></div>            
+            <label for="selectx">X Values</label>
+            <select class="varselect" id="selectx"></select>
+            <div class="spacer"></div>
+             <label for="selectx">Y Values</label>
+            <select class="varselect" id="selecty"></select> 
+            <div class="spacer"></div>            
+             <label for="selectx">Z Values</label>
+            <select class="varselect" id="selectz"></select>   
+            <div class="spacer"></div>   
+            <button type="button" onclick="submitbtn();">Submit</button>
+            <hr>
+  </div>
+          
+</div>
+</div>
+  
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+      <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="../CensusAPI_Map/assets/js/datatree.js"></script>
 <script>
 
-  
+
 
 var data = [
 {x:88.8893474761649,y:96.83224361339,z:468688,label:'Adams', category:'3'},
@@ -87,17 +126,222 @@ var setup = {
   dotcolor: 'maroon'
 } ; 
   
+
+var i;
+      
+        //loop through - add all themes
+       
+        for (i = 0; i < datatree.data.length; i=i+1) {
+            $('#selectx').append('<option value="' + datatree.data[i].varcode + '">' + datatree.data[i].verbose + '</option>'); 
+            $('#selecty').append('<option value="' + datatree.data[i].varcode + '">' + datatree.data[i].verbose + '</option>'); 
+            $('#selectz').append('<option value="' + datatree.data[i].varcode + '">' + datatree.data[i].verbose + '</option>'); 
+        }
+  
+  
+
+  
+
+    function submitbtn(){
+      
+      $( "svg" ).remove();
+              
+      var newsetuparray={};
+      
+    var tablelist='';
+      
+    var geog='cc';  //future - only working on Colorado Counties right now
+      
+    var xval=$("#selectx").val(); 
+    var yval=$("#selecty").val();
+    var zval=$("#selectz").val();  
+         
+    var db='acs0913';
+    var schema='data';
+    var limit='10000';
+      
+      var sumlev="50";
+      var state="8";
+      
+      var fp;
+      var xnumerator;
+      var xdenominator;
+      var ynumerator;
+      var ydenominator;
+      var znumerator;
+      var zdenominator;
+      
+    for(i=0;i<datatree.data.length;i=i+1){
+        if(xval==datatree.data[i].varcode){
+          fp=datatree.data[i];
+          tablelist=fp.table;
+          newsetuparray.xlabel=fp.verbose;
+         xnumerator=fp.numerator;
+         xdenominator=fp.denominator;       
+        }
+      
+    }     
+    for(i=0;i<datatree.data.length;i=i+1){
+        if(yval==datatree.data[i].varcode){
+          fp=datatree.data[i];
+          tablelist=tablelist+","+fp.table;
+          newsetuparray.ylabel=fp.verbose;
+         ynumerator=fp.numerator;
+         ydenominator=fp.denominator;      
+        }
+    }
+    
+      if(zval!=='none'){
+        for(i=0;i<datatree.data.length;i=i+1){
+          fp=datatree.data[i];
+          if(zval==datatree.data[i].varcode){
+            tablelist=tablelist+","+fp.table;
+             znumerator=fp.numerator;
+             zdenominator=fp.denominator;      
+          }
+          }           
+        }
+      
+
+    newsetuparray.title=newsetuparray.xlabel + ' by ' + newsetuparray.ylabel ;
+
+//first call query for CO AVG - encapsulate main call
+
+    $.get( "../CensusAPI/demog.php?db="+db+"&schema="+schema+"&table="+tablelist+"&geonum=108", function( prelim ) {
+
+      //get state avg data
+          fp=prelim.data[0];       
+
+          newsetuparray.quadrantxaxis=((eval(xnumerator))/(eval(xdenominator)));  
+          newsetuparray.quadrantyaxis=((eval(ynumerator))/(eval(ydenominator)));    
+
+      $.get( "../CensusAPI/demog.php?db="+db+"&schema="+schema+"&limit="+limit+"&table="+tablelist+"&sumlev="+sumlev+"&state="+state, function( results ) {
+      
+        //get individual data
+        
+      //console.log(results);
+      
+      var newdataarray=[];  
+      var tempobj={};
+      
+
+      
+      for(i=0;i<results.data.length;i=i+1){
+          fp=results.data[i];       
+          tempobj={};
+          tempobj.x=((eval(xnumerator))/(eval(xdenominator)));  
+          tempobj.y=((eval(ynumerator))/(eval(ydenominator)));    
+          tempobj.z=((eval(znumerator))/(eval(zdenominator)));        
+          tempobj.label=fp.geoname.replace(/ County, Colorado/g, "");    
+          tempobj.category=lookupregion(tempobj.label);
+          newdataarray.push(tempobj);
+      }
+
+      
+      //console.log(newdataarray);
+  
+      createQuadrantChart(newdataarray, newsetuparray);
+      
+    });
+      
+     });     
+      
+      function lookupregion(county){
+
+        switch(county){
+            case 'Adams': return '3';
+          case 'Alamosa': return '8';
+            case 'Arapahoe': return '3';
+            case 'Archuleta': return '9';
+            case 'Baca': return '6';
+            case 'Bent': return '6';
+            case 'Boulder': return '3';
+            case 'Broomfield': return '3';
+            case 'Chaffee': return '13';
+            case 'Cheyenne': return '5';
+            case 'Clear Creek': return '3';
+            case 'Conejos': return '8';
+            case 'Costilla': return '8';
+            case 'Crowley': return '6';
+            case 'Custer': return '13';
+            case 'Delta': return '10';
+            case 'Denver': return '3';
+            case 'Dolores': return '9';
+            case 'Douglas': return '3';
+            case 'Eagle': return '12';
+            case 'Elbert': return '5';
+            case 'El Paso': return '4';
+            case 'Fremont': return '13';
+            case 'Garfield': return '11';
+            case 'Gilpin': return '3';
+            case 'Grand': return '12';
+            case 'Gunnison': return '10';
+            case 'Hinsdale': return '10';
+            case 'Huerfano': return '14';
+            case 'Jackson': return '12';
+            case 'Jefferson': return '3';
+            case 'Kiowa': return '6';
+            case 'Kit Carson': return '5';
+            case 'Lake': return '13';
+            case 'La Plata': return '9';
+            case 'Larimer': return '2';
+            case 'Las Animas': return '14';
+            case 'Lincoln': return '5';
+            case 'Logan': return '1';
+            case 'Mesa': return '11';
+            case 'Mineral': return '8';
+            case 'Moffat': return '11';
+            case 'Montezuma': return '9';
+            case 'Montrose': return '10';
+            case 'Morgan': return '1';
+            case 'Otero': return '6';
+            case 'Ouray': return '10';
+            case 'Park': return '4';
+            case 'Phillips': return '1';
+            case 'Pitkin': return '12';
+            case 'Prowers': return '6';
+            case 'Pueblo': return '7';
+            case 'Rio Blanco': return '11';
+            case 'Rio Grande': return '8';
+            case 'Routt': return '11';
+            case 'Saguache': return '8';
+            case 'San Juan': return '9';
+            case 'San Miguel': return '10';
+            case 'Sedgwick': return '1';
+            case 'Summit': return '12';
+            case 'Teller': return '4';
+            case 'Washington': return '1';
+            case 'Weld': return '2';
+            case 'Yuma': return '1';
+  
+  console.log('uh oh - fall through switch');
+            
+  }
+
+}
+      
+  //WILL NEED A CROSSWALK FOR THIS
+  //
+  //categorize by
+  //-------------
+  // -Population Size
+  // -State Region
+  // -County Planning Region (Colorado Only)
+  // -Watershed
+  // -Median Household Income Quantile
+      
+      
+    } //end submitbtn
   
 
   function createQuadrantChart(data,setup){
   
 //Options
-var width = setup.width || 1200,
+var width = setup.width || 800,
     height = setup.height || 600,
     dotRadius = setup.dotRadius || 6, 
     gridSpacing = setup.gridSpacing || 10,
     topspace = setup.topspace || 60,
-    lbuffer= setup.lbuffer || 70,
+    lbuffer= setup.lbuffer || 100,
     rbuffer= setup.rbuffer || 40,
     bottomspace= setup.bottomspace || 60,
     title= setup.title || "",
@@ -196,7 +440,7 @@ if(!data[0].category){
 var buffer_x = (Math.abs(min_x)+Math.abs(max_x))*.01; //1% buffer
 var buffer_y = (Math.abs(min_y)+Math.abs(max_y))*.01; //1% buffer  
   
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#svgcontainer").append("svg")
     .attr("width",width) //+lbuffer+rbuffer
     .attr("height",height) //+bottomspace+topspace
     .style({'border': svgborderwidth+'solid'+svgbordercolor});
@@ -228,14 +472,17 @@ svg.append("path")
   .attr("d","M"+lbuffer+","+(((y(quadrantyaxis)))+0)+" L"+(width-rbuffer)+","+(((y(quadrantyaxis)+0))))
   .attr("stroke", quadrantaxiscolor)
   .attr("stroke-width", quadrantaxiswidth)
-  .attr('opacity', quadrantaxisopacity);
+  .attr('opacity', quadrantaxisopacity)
+  .append("svg:title")
+   .text(setup.quadrantyaxis);
 
 svg.append("path")
   .attr("d","M"+(x(quadrantxaxis))+","+topspace+" L"+(x(quadrantxaxis))+","+(height-bottomspace))
   .attr("stroke", quadrantaxiscolor)
   .attr("stroke-width", quadrantaxiswidth)
-  .attr('opacity', quadrantaxisopacity);
-  
+  .attr('opacity', quadrantaxisopacity)
+  .append("svg:title")
+   .text(setup.quadrantxaxis);
   
   var xAxis = d3.svg.axis().scale(x).orient("bottom"); 
   var yAxis = d3.svg.axis().scale(y).orient("left"); 
@@ -341,6 +588,5 @@ svg.append("text")
   }
   
   
-  
-  createQuadrantChart(data, setup);
+
 </script>
