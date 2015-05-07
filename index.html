@@ -2,6 +2,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+  
+  
 svg{
   shape-rendering: geometricPrecision; 
 }
@@ -13,36 +15,65 @@ svg{
 .spacerbig{
   padding-top: 40px;
 }
+  
+  #datadiv { 
+    position: absolute;
+    display: block;
+    bottom: 5px;
+    left: 5px;
+}
+  
+  #sidebar{
+    
+    margin-right: 50px;
+  }
 
 </style>  
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 <body>
 
-<div class="container">
+<div class="container-fluid">
 <div class="row" style="padding-top: 20px;">
           
-          <div class="col-md-9"><div id="svgcontainer"></div></div>
+          <div class="col-md-8"><div id="svgcontainer"></div></div>
           <div class="col-md-3">
-            <label for="selectx">Geography</label><br />
-            <select class="varselect" id="selectgeo"><option>Colorado Counties</option></select>            
+            <div id="sidebar">
+            <label for="selectgeo">Geography:</label><br />
+            <select class="varselect" id="selectgeo">
+              <option value="cc">Colorado Counties</option>
+              <option value="cp">Colorado Places</option>              
+            </select>            
             <div class="spacerbig"></div>            
-            <label for="selectx">X Values</label>
+            <label for="selectx">X Values:</label>
             <select class="varselect" id="selectx"></select>
             <div class="spacer"></div>
-             <label for="selectx">Y Values</label>
+             <label for="selectx">Y Values:</label>
             <select class="varselect" id="selecty"></select> 
             <div class="spacer"></div>            
-             <label for="selectx">Z Values</label>
-            <select class="varselect" id="selectz"></select>   
+             <label for="selectx">Z Values:</label>
+            <select class="varselect" id="selectz">
+              <option value="none">None</option> 
+              </select>   
+            <div class="spacer"></div>   
+            <label for="classify">Color by:</label><br />
+            <select class="varselect" id="classify">
+              <option value="none">None</option>             
+              <option value="pr">Planning Region</option>
+              <!--<option value="w">Watershed</option>                 -->
+              <option value="pq">Population Quantile</option> 
+              <option value="mhiq">Median HH Income Quantile</option>             
+            </select>    
             <div class="spacer"></div>   
             <button type="button" onclick="submitbtn();">Submit</button>
-            <hr>
+            </div> <!-- end sidebar -->
+            <div class="col-md-1"></div>
   </div>
-          
+           
 </div>
 </div>
   
+
       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
       <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -50,96 +81,20 @@ svg{
 <script>
 
 
-
-var data = [
-{x:88.8893474761649,y:96.83224361339,z:468688,label:'Adams', category:'3'},
-{x:68.6353818426954,y:92.3274245106357,z:15805,label:'Alamosa', category:'8'},
-{x:101.323482878644,y:98.724988112527,z:606603,label:'Arapahoe', category:'3'},
-{x:80.0996051563553,y:90.7128277200863,z:12168,label:'Archuleta', category:'9'},
-{x:66.1466286956402,y:83.0526846833904,z:3669,label:'Baca', category:'6'},
-{x:58.6047023539285,y:84.5160978596602,z:5674,label:'Bent', category:'6'},
-{x:127.487721325684,y:105.388092614466,z:309874,label:'Boulder', category:'3'},
-{x:133.155860057507,y:103.993890020367,z:59450,label:'Broomfield', category:'3'},
-{x:82.0380535721656,y:96.372900500271,z:18282,label:'Chaffee', category:'13'},
-{x:87.9634597658453,y:85.4492402130849,z:1887,label:'Cheyenne', category:'5'},
-{x:123.244871847786,y:101.729120605985,z:9029,label:'Clear Creek', category:'3'},
-{x:60.9985279348439,y:85.2076681478301,z:8228,label:'Conejos', category:'8'},
-{x:57.1642797198949,y:88.6683941533608,z:3506,label:'Costilla', category:'8'},
-{x:56.7776906461953,y:84.4134389428472,z:5225,label:'Crowley', category:'6'},
-{x:68.7880914056159,y:94.3910353281347,z:4295,label:'Custer', category:'13'},
-{x:70.9053888590807,y:94.733194175395,z:30299,label:'Delta', category:'10'},
-{x:87.6429072598952,y:109.566187536091,z:648937,label:'Denver', category:'3'},
-{x:71.3676448333265,y:89.4969418164291,z:2012,label:'Dolores', category:'9'},
-{x:155.364783248724,y:101.266798830223,z:306033,label:'Douglas', category:'3'},
-{x:118.545269442954,y:109.796330094069,z:52338,label:'Eagle', category:'12'},
-{x:123.341175175754,y:96.5903436140707,z:23679,label:'Elbert', category:'5'},
-{x:97.304882578728,y:98.6352566533312,z:655812,label:'El Paso', category:'4'},
-{x:66.8936673683052,y:92.1877452371283,z:46260,label:'Fremont', category:'13'},
-{x:92.0948725356666,y:102.951251258918,z:57298,label:'Garfield', category:'11'},
-{x:120.570390853935,y:96.2362491115743,z:5589,label:'Gilpin', category:'3'},
-{x:102.381443724462,y:105.94659010925,z:14287,label:'Grand', category:'12'},
-{x:92.2407032894465,y:102.545821187839,z:15454,label:'Gunnison', category:'10'},
-{x:104.557898936536,y:103.932786515126,z:805,label:'Hinsdale', category:'10'},
-{x:57.5921416484378,y:87.51619073138,z:6467,label:'Huerfano', category:'14'},
-{x:83.5280036320112,y:91.3116057027918,z:1353,label:'Jackson', category:'12'},
-{x:116.880597630938,y:102.050912855195,z:552213,label:'Jefferson', category:'3'},
-{x:76.9573651409468,y:82.3594054704967,z:1401,label:'Kiowa', category:'6'},
-{x:79.1585840659265,y:90.6969705390269,z:8052,label:'Kit Carson', category:'5'},
-{x:78.7857526105081,y:101.313642005741,z:7308,label:'Lake', category:'13'},
-{x:93.1831001417035,y:103.11840229364,z:53446,label:'La Plata', category:'9'},
-{x:104.82479673119,y:98.4207720307789,z:315728,label:'Larimer', category:'2'},
-{x:73.0378196926548,y:88.050443199134,z:14361,label:'Las Animas', category:'14'},
-{x:71.3676448333265,y:87.3299321052859,z:5420,label:'Lincoln', category:'5'},
-{x:68.7880914056159,y:92.7060756161623,z:21858,label:'Logan', category:'1'},
-{x:83.280366502951,y:93.653554562575,z:147811,label:'Mesa', category:'11'},
-{x:94.1543879923508,y:98.2118091225416,z:721,label:'Mineral', category:'8'},
-{x:94.6826805343459,y:97.5030515103595,z:13090,label:'Moffat', category:'11'},
-{x:67.7493912253911,y:92.6343781654606,z:25650,label:'Montezuma', category:'9'},
-{x:76.8335465764167,y:92.842599321027,z:40754,label:'Montrose', category:'10'},
-{x:69.0659952948945,y:94.9171316857873,z:28311,label:'Morgan', category:'1'},
-{x:57.7035783565149,y:85.5426549091641,z:18549,label:'Otero', category:'6'},
-{x:99.3699010827246,y:101.519797671058,z:4529,label:'Ouray', category:'10'},
-{x:104.70097816666,y:100.029921442812,z:16192,label:'Park', category:'4'},
-{x:75.0932078638546,y:89.0424380421359,z:4346,label:'Phillips', category:'1'},
-{x:61.195261876264,y:83.8922759180377,z:12236,label:'Prowers', category:'6'},
-{x:72.5095271506597,y:93.1034195383797,z:161258,label:'Pueblo', category:'7'},
-{x:104.527632176318,y:93.5413200448563,z:6778,label:'Rio Blanco', category:'11'},
-{x:62.3866716194092,y:92.5026629771151,z:11736,label:'Rio Grande', category:'8'},
-{x:102.575426142226,y:110.612378395165,z:23400,label:'Routt', category:'11'},
-{x:56.6181022741343,y:87.586494644247,z:6231,label:'Saguache', category:'8'},
-{x:73.1822746846066,y:100.197552432534,z:687,label:'San Juan', category:'9'},
-{x:106.907700138952,y:110.515766968954,z:7658,label:'San Miguel', category:'10'},
-{x:73.603257804009,y:87.1103280295653,z:2340,label:'Sedgwick', category:'1'},
-{x:109.26300438868,y:121.985739027718,z:28637,label:'Summit', category:'12'},
-{x:100.952027185054,y:96.7182144794295,z:23278,label:'Teller', category:'4'},
-{x:76.5006122140135,y:87.2595456807304,z:4772,label:'Washington', category:'1'},
-{x:91.9559205910273,y:93.7244067739753,z:269643,label:'Weld', category:'2'},
-{x:73.6060093276652,y:87.1064786861444,z:10114,label:'Yuma', category:'1'}
-];
   
 var setup = {
-  quadrantxaxis: 100,
-  quadrantyaxis: 100,
-  title: "Median Family Income by Cost of Living",
-  xlabel: "Median Family Income Index",
-  ylabel: "Cost of Living Index",
   dotcolor: 'maroon'
 } ; 
   
-
-var i;
-      
         //loop through - add all themes
-       
+        var i;
+    
         for (i = 0; i < datatree.data.length; i=i+1) {
             $('#selectx').append('<option value="' + datatree.data[i].varcode + '">' + datatree.data[i].verbose + '</option>'); 
             $('#selecty').append('<option value="' + datatree.data[i].varcode + '">' + datatree.data[i].verbose + '</option>'); 
             $('#selectz').append('<option value="' + datatree.data[i].varcode + '">' + datatree.data[i].verbose + '</option>'); 
         }
-  
-  
 
-  
 
     function submitbtn(){
       
@@ -148,8 +103,7 @@ var i;
       var newsetuparray={};
       
     var tablelist='';
-      
-    var geog='cc';  //future - only working on Colorado Counties right now
+
       
     var xval=$("#selectx").val(); 
     var yval=$("#selecty").val();
@@ -159,14 +113,30 @@ var i;
     var schema='data';
     var limit='10000';
       
-      var sumlev="50";
+      var sumlev;
+
+    var geog=$("#selectgeo").val(); 
+      
+      if(geog=='cc'){sumlev="50";}
+      if(geog=='cp'){
+        sumlev="160";
+      //too many labels
+        newsetuparray.itemslabel='false';
+      }            
+
+      
       var state="8";
       
       var fp;
+      
       var xnumerator;
       var xdenominator;
+      var xtype;
+      
       var ynumerator;
       var ydenominator;
+      var ytype;
+      
       var znumerator;
       var zdenominator;
       
@@ -176,8 +146,14 @@ var i;
           tablelist=fp.table;
           newsetuparray.xlabel=fp.verbose;
          xnumerator=fp.numerator;
-         xdenominator=fp.denominator;       
+         xdenominator=fp.denominator;  
+          if(fp.type=="currency"){newsetuparray.xtype="$,.0f";}
+          if(fp.type=="regular"){newsetuparray.xtype=".0f";}
+          if(fp.type=="number"){newsetuparray.xtype=",.0f";}
+          if(fp.type=="percent"){newsetuparray.xtype="%,.2";}          
         }
+      
+      
       
     }     
     for(i=0;i<datatree.data.length;i=i+1){
@@ -186,7 +162,11 @@ var i;
           tablelist=tablelist+","+fp.table;
           newsetuparray.ylabel=fp.verbose;
          ynumerator=fp.numerator;
-         ydenominator=fp.denominator;      
+         ydenominator=fp.denominator;   
+          if(fp.type=="currency"){newsetuparray.ytype="$,.0f";}
+          if(fp.type=="regular"){newsetuparray.ytype=".0f";}
+          if(fp.type=="number"){newsetuparray.ytype=",.0f";}
+          if(fp.type=="percent"){newsetuparray.ytype="%,.2";}     
         }
     }
     
@@ -196,11 +176,16 @@ var i;
           if(zval==datatree.data[i].varcode){
             tablelist=tablelist+","+fp.table;
              znumerator=fp.numerator;
-             zdenominator=fp.denominator;      
+             zdenominator=fp.denominator; 
+             console.log(fp.type);
+          if(fp.type=="currency"){newsetuparray.ztype="$,.0f";}
+          if(fp.type=="regular"){newsetuparray.ztype=".0f";}
+          if(fp.type=="number"){newsetuparray.ztype=",.0f";}
+          if(fp.type=="percent"){newsetuparray.ztype="%,.2";}  
           }
           }           
         }
-      
+
 
     newsetuparray.title=newsetuparray.xlabel + ' by ' + newsetuparray.ylabel ;
 
@@ -224,7 +209,6 @@ var i;
       var tempobj={};
       
 
-      
       for(i=0;i<results.data.length;i=i+1){
           fp=results.data[i];       
           tempobj={};
@@ -236,9 +220,7 @@ var i;
           newdataarray.push(tempobj);
       }
 
-      
-      //console.log(newdataarray);
-  
+
       createQuadrantChart(newdataarray, newsetuparray);
       
     });
@@ -247,98 +229,97 @@ var i;
       
       function lookupregion(county){
 
+        var found={};
+        
         switch(county){
-            case 'Adams': return '3';
-          case 'Alamosa': return '8';
-            case 'Arapahoe': return '3';
-            case 'Archuleta': return '9';
-            case 'Baca': return '6';
-            case 'Bent': return '6';
-            case 'Boulder': return '3';
-            case 'Broomfield': return '3';
-            case 'Chaffee': return '13';
-            case 'Cheyenne': return '5';
-            case 'Clear Creek': return '3';
-            case 'Conejos': return '8';
-            case 'Costilla': return '8';
-            case 'Crowley': return '6';
-            case 'Custer': return '13';
-            case 'Delta': return '10';
-            case 'Denver': return '3';
-            case 'Dolores': return '9';
-            case 'Douglas': return '3';
-            case 'Eagle': return '12';
-            case 'Elbert': return '5';
-            case 'El Paso': return '4';
-            case 'Fremont': return '13';
-            case 'Garfield': return '11';
-            case 'Gilpin': return '3';
-            case 'Grand': return '12';
-            case 'Gunnison': return '10';
-            case 'Hinsdale': return '10';
-            case 'Huerfano': return '14';
-            case 'Jackson': return '12';
-            case 'Jefferson': return '3';
-            case 'Kiowa': return '6';
-            case 'Kit Carson': return '5';
-            case 'Lake': return '13';
-            case 'La Plata': return '9';
-            case 'Larimer': return '2';
-            case 'Las Animas': return '14';
-            case 'Lincoln': return '5';
-            case 'Logan': return '1';
-            case 'Mesa': return '11';
-            case 'Mineral': return '8';
-            case 'Moffat': return '11';
-            case 'Montezuma': return '9';
-            case 'Montrose': return '10';
-            case 'Morgan': return '1';
-            case 'Otero': return '6';
-            case 'Ouray': return '10';
-            case 'Park': return '4';
-            case 'Phillips': return '1';
-            case 'Pitkin': return '12';
-            case 'Prowers': return '6';
-            case 'Pueblo': return '7';
-            case 'Rio Blanco': return '11';
-            case 'Rio Grande': return '8';
-            case 'Routt': return '11';
-            case 'Saguache': return '8';
-            case 'San Juan': return '9';
-            case 'San Miguel': return '10';
-            case 'Sedgwick': return '1';
-            case 'Summit': return '12';
-            case 'Teller': return '4';
-            case 'Washington': return '1';
-            case 'Weld': return '2';
-            case 'Yuma': return '1';
-  
-  console.log('uh oh - fall through switch');
+          case 'Adams': found = {'pr':'3','w':'','pq':'1','mhiq':'2'}; break;
+          case 'Alamosa': found = {'pr':'8','w':'','pq':'3','mhiq':'5'}; break;
+            case 'Arapahoe': found = {'pr':'3','w':'','pq':'1','mhiq':'2'}; break;
+            case 'Archuleta': found = {'pr':'9','w':'','pq':'3','mhiq':'3'}; break;
+            case 'Baca': found = {'pr':'6','w':'','pq':'5','mhiq':'5'}; break;
+            case 'Bent': found = {'pr':'6','w':'','pq':'4','mhiq':'5'}; break;
+            case 'Boulder': found = {'pr':'3','w':'','pq':'1','mhiq':'1'}; break;
+            case 'Broomfield': found = {'pr':'3','w':'','pq':'1','mhiq':'1'}; break;
+            case 'Chaffee': found = {'pr':'13','w':'','pq':'3','mhiq':'3'}; break;
+            case 'Cheyenne': found = {'pr':'5','w':'','pq':'5','mhiq':'3'}; break;
+            case 'Clear Creek': found = {'pr':'3','w':'','pq':'3','mhiq':'1'}; break;
+            case 'Conejos': found = {'pr':'8','w':'','pq':'4','mhiq':'5'}; break;
+            case 'Costilla': found = {'pr':'8','w':'','pq':'5','mhiq':'5'}; break;
+            case 'Crowley': found = {'pr':'6','w':'','pq':'4','mhiq':'5'}; break;
+            case 'Custer': found = {'pr':'13','w':'','pq':'5','mhiq':'5'}; break;
+            case 'Delta': found = {'pr':'10','w':'','pq':'2','mhiq':'4'}; break;
+            case 'Denver': found = {'pr':'3','w':'','pq':'1','mhiq':'3'}; break;
+            case 'Dolores': found = {'pr':'9','w':'','pq':'5','mhiq':'5'}; break;
+            case 'Douglas': found = {'pr':'3','w':'','pq':'1','mhiq':'1'}; break;
+            case 'Eagle': found = {'pr':'12','w':'','pq':'2','mhiq':'1'}; break;
+            case 'Elbert': found = {'pr':'5','w':'','pq':'2','mhiq':'1'}; break;
+            case 'El Paso': found = {'pr':'4','w':'','pq':'1','mhiq':'2'}; break;
+            case 'Fremont': found = {'pr':'13','w':'','pq':'2','mhiq':'4'}; break;
+            case 'Garfield': found = {'pr':'11','w':'','pq':'1','mhiq':'2'}; break;
+            case 'Gilpin': found = {'pr':'3','w':'','pq':'4','mhiq':'1'}; break;
+            case 'Grand': found = {'pr':'12','w':'','pq':'3','mhiq':'1'}; break;
+            case 'Gunnison': found = {'pr':'10','w':'','pq':'3','mhiq':'3'}; break;
+            case 'Hinsdale': found = {'pr':'10','w':'','pq':'5','mhiq':'2'}; break;
+            case 'Huerfano': found = {'pr':'14','w':'','pq':'4','mhiq':'5'}; break;
+            case 'Jackson': found = {'pr':'12','w':'','pq':'5','mhiq':'4'}; break;
+            case 'Jefferson': found = {'pr':'3','w':'','pq':'1','mhiq':'1'}; break;
+            case 'Kiowa': found = {'pr':'6','w':'','pq':'5','mhiq':'4'}; break;
+            case 'Kit Carson': found = {'pr':'5','w':'','pq':'4','mhiq':'3'}; break;
+            case 'Lake': found = {'pr':'13','w':'','pq':'4','mhiq':'3'}; break;
+            case 'La Plata': found = {'pr':'9','w':'','pq':'2','mhiq':'2'}; break;
+            case 'Larimer': found = {'pr':'2','w':'','pq':'1','mhiq':'2'}; break;
+            case 'Las Animas': found = {'pr':'14','w':'','pq':'3','mhiq':'4'}; break;
+            case 'Lincoln': found = {'pr':'5','w':'','pq':'4','mhiq':'4'}; break;
+            case 'Logan': found = {'pr':'1','w':'','pq':'2','mhiq':'4'}; break;
+            case 'Mesa': found = {'pr':'11','w':'','pq':'1','mhiq':'3'}; break;
+            case 'Mineral': found = {'pr':'8','w':'','pq':'5','mhiq':'3'}; break;
+            case 'Moffat': found = {'pr':'11','w':'','pq':'3','mhiq':'2'}; break;
+            case 'Montezuma': found = {'pr':'9','w':'','pq':'2','mhiq':'4'}; break;
+            case 'Montrose': found = {'pr':'10','w':'','pq':'2','mhiq':'3'}; break;
+            case 'Morgan': found = {'pr':'1','w':'','pq':'2','mhiq':'3'}; break;
+            case 'Otero': found = {'pr':'6','w':'','pq':'2','mhiq':'5'}; break;
+            case 'Ouray': found = {'pr':'10','w':'','pq':'4','mhiq':'1'}; break;
+            case 'Park': found = {'pr':'4','w':'','pq':'3','mhiq':'2'}; break;
+            case 'Phillips': found = {'pr':'1','w':'','pq':'5','mhiq':'4'}; break;
+            case 'Pitkin': found = {'pr':'12','w':'','pq':'3','mhiq':'1'}; break;
+            case 'Prowers': found = {'pr':'6','w':'','pq':'3','mhiq':'5'}; break;
+            case 'Pueblo': found = {'pr':'7','w':'','pq':'1','mhiq':'4'}; break;
+            case 'Rio Blanco': found = {'pr':'11','w':'','pq':'4','mhiq':'2'}; break;
+            case 'Rio Grande': found = {'pr':'8','w':'','pq':'3','mhiq':'4'}; break;
+            case 'Routt': found = {'pr':'11','w':'','pq':'2','mhiq':'2'}; break;
+            case 'Saguache': found = {'pr':'8','w':'','pq':'4','mhiq':'5'}; break;
+            case 'San Juan': found = {'pr':'9','w':'','pq':'5','mhiq':'4'}; break;
+            case 'San Miguel': found = {'pr':'10','w':'','pq':'4','mhiq':'1'}; break;
+            case 'Sedgwick': found = {'pr':'1','w':'','pq':'5','mhiq':'4'}; break;
+            case 'Summit': found = {'pr':'12','w':'','pq':'2','mhiq':'1'}; break;
+            case 'Teller': found = {'pr':'4','w':'','pq':'2','mhiq':'2'}; break;
+            case 'Washington': found = {'pr':'1','w':'','pq':'4','mhiq':'3'}; break;
+            case 'Weld': found = {'pr':'2','w':'','pq':'1','mhiq':'2'}; break;
+            case 'Yuma': found = {'pr':'1','w':'','pq':'3','mhiq':'3'}; break;
             
   }
-
+        if($("#classify").val()=='none'){return '5';}
+        if($("#classify").val()=='pr'){return found.pr;}
+        if($("#classify").val()=='w'){return found.w;}
+        if($("#classify").val()=='pq'){return found.pq;}
+        if($("#classify").val()=='mhiq'){return found.mhiq;}
+        
 }
       
-  //WILL NEED A CROSSWALK FOR THIS
-  //
-  //categorize by
-  //-------------
-  // -Population Size
-  // -State Region
-  // -County Planning Region (Colorado Only)
-  // -Watershed
-  // -Median Household Income Quantile
-      
-      
+     
     } //end submitbtn
   
 
   function createQuadrantChart(data,setup){
-  
+
 //Options
 var width = setup.width || 800,
     height = setup.height || 600,
-    dotRadius = setup.dotRadius || 6, 
+    dotRadius = setup.dotRadius || 3, 
+    dotcolor = setup.dotcolor || 'black', 
+    xtype = setup.xtype || ".0f",
+    ytype = setup.ytype || ".0f",
+    ztype = setup.ztype || ".0f",
     gridSpacing = setup.gridSpacing || 10,
     topspace = setup.topspace || 60,
     lbuffer= setup.lbuffer || 100,
@@ -352,7 +333,6 @@ var width = setup.width || 800,
     quadrantaxiscolor = setup.quadrantaxiscolor || 'grey',
     quadrantaxiswidth = setup.quadrantaxiswidth || '2px',
     quadrantaxisopacity = setup.quadrantaxisopacity || '0.5',
-    dotcolor = setup.dotcolor || 'black',
     svgborderwidth = setup.svgborderwidth || '1px ',
     svgbordercolor = setup.svgbordercolor || ' #ccc',
     gridlinesstroke = setup.gridlinesstroke || 'steelblue', 
@@ -367,7 +347,7 @@ var width = setup.width || 800,
     item_max_ptsize = setup.item_max_ptsize || 8,
     dotstroke = setup.dotstroke || 'none',
     dotstrokewidth = setup.dotstrokewidth || '0px',
-    itemslabel = setup.itemslabel || true,
+    itemslabel = setup.itemslabel || 'true',
     itemsfontsize = setup.itemsfontsize || '10px',
     itemsfontcolor = setup.itemsfontcolor || 'black',
     titlefontsize = setup.titlefontsize || '24px',
@@ -430,15 +410,24 @@ if(!data[0].category){
     }
     return out;
 }
+  //12 unique colors based on colorbrewer
+  var c20 = d3.scale.ordinal().domain([]).range(["#1f78b4", "#33a02c" , "#e31a1c", "#ff7f00" , "#6a3d9a", "#b15928",  "#a6cee3", "#b2df8a" , "#fb9a99", "#fdbf6f" , "#cab2d6", "#ffff99"]);
+  //add more schemes later
   
+//remove duplicates
   var newarray=uniq_fast(categoryarray);
-  var c20 = d3.scale.category20();
+  
+  //statement below to change color schemes depending on number of unique classes
+  //if(newarray.length<11){c20=d3.scale.category10();}else{c20=d3.scale.category20();}
+
+  var colorscale =c20;
+
   
 }    
   
 //buffer the axis ranges so that points arent on edge of graph  
-var buffer_x = (Math.abs(min_x)+Math.abs(max_x))*.01; //1% buffer
-var buffer_y = (Math.abs(min_y)+Math.abs(max_y))*.01; //1% buffer  
+var buffer_x = ((max_x)-(min_x))*.03; //3% buffer
+var buffer_y = ((max_y)-(min_y))*.03; //3% buffer  
   
 var svg = d3.select("#svgcontainer").append("svg")
     .attr("width",width) //+lbuffer+rbuffer
@@ -484,8 +473,8 @@ svg.append("path")
   .append("svg:title")
    .text(setup.quadrantxaxis);
   
-  var xAxis = d3.svg.axis().scale(x).orient("bottom"); 
-  var yAxis = d3.svg.axis().scale(y).orient("left"); 
+  var xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(d3.format(xtype)); 
+  var yAxis = d3.svg.axis().scale(y).orient("left").tickFormat(d3.format(ytype)); 
  
   var xAxisGroup = svg.append("g") //
     .attr("class", "xaxis")
@@ -532,19 +521,21 @@ items.append("circle")
     return dotcolor;
   }else{
     for(var i=0; i<newarray.length; i=i+1){
-      if(d.category==newarray[i]){return c20(i);}
+      if(d.category==newarray[i]){return colorscale(i);}
     }
   }
 
 }, 'stroke': dotstroke, 'stroke-width': dotstrokewidth})
   .append("svg:title")
-   .text(function(d) { return d.label; });
-
-
+   .text(function(d) { 
+  var xformatter=d3.format(xtype); 
+  var yformatter=d3.format(ytype); 
+  var zformatter=d3.format(ztype); 
+  return d.label+"\nx:\u00A0\u00A0"+xformatter(d.x)+"\ny:\u00A0\u00A0"+yformatter(d.y)+"\nz:\u00A0\u00A0"+zformatter(d.z); 
+});
 
     
-if(itemslabel){    
-
+if(itemslabel==='true'){  
   
 var textLabels = items.append("text")
   .attr("x",function(d){
@@ -590,3 +581,11 @@ svg.append("text")
   
 
 </script>
+  
+<div id="datadiv">
+  <p><b>Data:</b> <a href="http://www.census.gov/acs/www/" target="_blank">ACS 2009-2013 5-Year Estimates</a></p>
+  <p><b>Created by:</b> <a href="http://www.colorado.gov/demography" target="_blank">Colorado State Demography Office</a></p>
+</div>
+  
+  
+</body>
