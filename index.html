@@ -1,591 +1,96 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-  
-  
-svg{
-  shape-rendering: geometricPrecision; 
-}
-  
-.spacer{
-  padding-top: 20px;
-}
-    
-.spacerbig{
-  padding-top: 40px;
-}
-  
-  #datadiv { 
-    position: absolute;
-    display: block;
-    bottom: 5px;
-    left: 5px;
-}
-  
-  #sidebar{
-    
-    margin-right: 50px;
-  }
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Linux/x86 (vers 25 March 2009), see www.w3.org" />
 
-</style>  
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+  <title>ACS 09-13 D3 Quadrant Map</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/app.css" type="text/css" />
+  <link rel="stylesheet" href=
+  "//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" type="text/css" />
+  <link rel="stylesheet" href=
+  "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" type=
+  "text/css" />
+</head>
+
 <body>
+  <div class="container-fluid">
+    <div class="row" style="padding-top: 20px;">
+      <div class="col-md-8">
+        <div id="svgcontainer"></div>
+      </div>
 
-<div class="container-fluid">
-<div class="row" style="padding-top: 20px;">
-          
-          <div class="col-md-8"><div id="svgcontainer"></div></div>
-          <div class="col-md-3">
-            <div id="sidebar">
-            <label for="selectgeo">Geography:</label><br />
-            <select class="varselect" id="selectgeo">
-              <option value="cc">Colorado Counties</option>
-              <option value="cp">Colorado Places</option>              
-            </select>            
-            <div class="spacerbig"></div>            
-            <label for="selectx">X Values:</label>
-            <select class="varselect" id="selectx"></select>
-            <div class="spacer"></div>
-             <label for="selectx">Y Values:</label>
-            <select class="varselect" id="selecty"></select> 
-            <div class="spacer"></div>            
-             <label for="selectx">Z Values:</label>
-            <select class="varselect" id="selectz">
-              <option value="none">None</option> 
-              </select>   
-            <div class="spacer"></div>   
-            <label for="classify">Color by:</label><br />
-            <select class="varselect" id="classify">
-              <option value="none">None</option>             
-              <option value="pr">Planning Region</option>
-              <!--<option value="w">Watershed</option>                 -->
-              <option value="pq">Population Quantile</option> 
-              <option value="mhiq">Median HH Income Quantile</option>             
-            </select>    
-            <div class="spacer"></div>   
-            <button type="button" onclick="submitbtn();">Submit</button>
-            </div> <!-- end sidebar -->
-            <div class="col-md-1"></div>
-  </div>
-           
-</div>
-</div>
-  
+      <div class="col-md-3">
+        <div id="sidebar">
+          <label for="selectgeo">Geography:</label><br />
+          <select class="varselect" id="selectgeo" tabindex="1">
+            <option value="cc" selected="selected">
+              Colorado Counties
+            </option>
 
-      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-      <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-<script src="http://d3js.org/d3.v3.min.js"></script>
-  <script src="../CensusAPI_Map/assets/js/datatree.js"></script>
-<script>
+            <option value="cp">
+              Colorado Places
+            </option>
+          </select>
 
+          <div class="spacerbig"></div><label for="selectx">X Values:</label>
+          <select class="varselect" id="selectx" tabindex="2">
+            </select>
 
-  
-var setup = {
-  dotcolor: 'maroon'
-} ; 
-  
-        //loop through - add all themes
-        var i;
-    
-        for (i = 0; i < datatree.data.length; i=i+1) {
-            $('#selectx').append('<option value="' + datatree.data[i].varcode + '">' + datatree.data[i].verbose + '</option>'); 
-            $('#selecty').append('<option value="' + datatree.data[i].varcode + '">' + datatree.data[i].verbose + '</option>'); 
-            $('#selectz').append('<option value="' + datatree.data[i].varcode + '">' + datatree.data[i].verbose + '</option>'); 
-        }
+          <div class="spacer"></div><label for="selectx">Y Values:</label> <select class=
+          "varselect" id="selecty" tabindex="3">
+            </select>
 
+          <div class="spacer"></div><label for="selectx">Z Values:</label> <select class=
+          "varselect" id="selectz" tabindex="4">
+            <option value="none" selected="selected">
+              None
+            </option>
+          </select>
 
-    function submitbtn(){
-      
-      $( "svg" ).remove();
-              
-      var newsetuparray={};
-      
-    var tablelist='';
+          <div class="spacer"></div><label for="classify">Color by:</label><br />
+          <select class="varselect" id="classify" tabindex="5">
+            <option value="none" selected="selected">
+              None
+            </option>
 
-      
-    var xval=$("#selectx").val(); 
-    var yval=$("#selecty").val();
-    var zval=$("#selectz").val();  
-         
-    var db='acs0913';
-    var schema='data';
-    var limit='10000';
-      
-      var sumlev;
+            <option value="pr">
+              Planning Region
+            </option><!--<option value="w">Watershed</option>-->
 
-    var geog=$("#selectgeo").val(); 
-      
-      if(geog=='cc'){sumlev="50";}
-      if(geog=='cp'){
-        sumlev="160";
-      //too many labels
-        newsetuparray.itemslabel='false';
-      }            
+            <option value="pq">
+              Population Quantile
+            </option>
 
-      
-      var state="8";
-      
-      var fp;
-      
-      var xnumerator;
-      var xdenominator;
-      var xtype;
-      
-      var ynumerator;
-      var ydenominator;
-      var ytype;
-      
-      var znumerator;
-      var zdenominator;
-      
-    for(i=0;i<datatree.data.length;i=i+1){
-        if(xval==datatree.data[i].varcode){
-          fp=datatree.data[i];
-          tablelist=fp.table;
-          newsetuparray.xlabel=fp.verbose;
-         xnumerator=fp.numerator;
-         xdenominator=fp.denominator;  
-          if(fp.type=="currency"){newsetuparray.xtype="$,.0f";}
-          if(fp.type=="regular"){newsetuparray.xtype=".0f";}
-          if(fp.type=="number"){newsetuparray.xtype=",.0f";}
-          if(fp.type=="percent"){newsetuparray.xtype="%,.2";}          
-        }
-      
-      
-      
-    }     
-    for(i=0;i<datatree.data.length;i=i+1){
-        if(yval==datatree.data[i].varcode){
-          fp=datatree.data[i];
-          tablelist=tablelist+","+fp.table;
-          newsetuparray.ylabel=fp.verbose;
-         ynumerator=fp.numerator;
-         ydenominator=fp.denominator;   
-          if(fp.type=="currency"){newsetuparray.ytype="$,.0f";}
-          if(fp.type=="regular"){newsetuparray.ytype=".0f";}
-          if(fp.type=="number"){newsetuparray.ytype=",.0f";}
-          if(fp.type=="percent"){newsetuparray.ytype="%,.2";}     
-        }
-    }
-    
-      if(zval!=='none'){
-        for(i=0;i<datatree.data.length;i=i+1){
-          fp=datatree.data[i];
-          if(zval==datatree.data[i].varcode){
-            tablelist=tablelist+","+fp.table;
-             znumerator=fp.numerator;
-             zdenominator=fp.denominator; 
-             console.log(fp.type);
-          if(fp.type=="currency"){newsetuparray.ztype="$,.0f";}
-          if(fp.type=="regular"){newsetuparray.ztype=".0f";}
-          if(fp.type=="number"){newsetuparray.ztype=",.0f";}
-          if(fp.type=="percent"){newsetuparray.ztype="%,.2";}  
-          }
-          }           
-        }
+            <option value="mhiq">
+              Median HH Income Quantile
+            </option>
+          </select>
 
+          <div class="spacer"></div><button type="button" onclick="submitbtn();"
+          tabindex="6" accesskey="s">Submit</button>
+        </div><!-- end sidebar -->
+      </div><!-- end col-md-3 -->
 
-    newsetuparray.title=newsetuparray.xlabel + ' by ' + newsetuparray.ylabel ;
-
-//first call query for CO AVG - encapsulate main call
-
-    $.get( "../CensusAPI/demog.php?db="+db+"&schema="+schema+"&table="+tablelist+"&geonum=108", function( prelim ) {
-
-      //get state avg data
-          fp=prelim.data[0];       
-
-          newsetuparray.quadrantxaxis=((eval(xnumerator))/(eval(xdenominator)));  
-          newsetuparray.quadrantyaxis=((eval(ynumerator))/(eval(ydenominator)));    
-
-      $.get( "../CensusAPI/demog.php?db="+db+"&schema="+schema+"&limit="+limit+"&table="+tablelist+"&sumlev="+sumlev+"&state="+state, function( results ) {
-      
-        //get individual data
-        
-      //console.log(results);
-      
-      var newdataarray=[];  
-      var tempobj={};
-      
-
-      for(i=0;i<results.data.length;i=i+1){
-          fp=results.data[i];       
-          tempobj={};
-          tempobj.x=((eval(xnumerator))/(eval(xdenominator)));  
-          tempobj.y=((eval(ynumerator))/(eval(ydenominator)));    
-          tempobj.z=((eval(znumerator))/(eval(zdenominator)));        
-          tempobj.label=fp.geoname.replace(/ County, Colorado/g, "");    
-          tempobj.category=lookupregion(tempobj.label);
-          newdataarray.push(tempobj);
-      }
-
-
-      createQuadrantChart(newdataarray, newsetuparray);
-      
-    });
-      
-     });     
-      
-      function lookupregion(county){
-
-        var found={};
-        
-        switch(county){
-          case 'Adams': found = {'pr':'3','w':'','pq':'1','mhiq':'2'}; break;
-          case 'Alamosa': found = {'pr':'8','w':'','pq':'3','mhiq':'5'}; break;
-            case 'Arapahoe': found = {'pr':'3','w':'','pq':'1','mhiq':'2'}; break;
-            case 'Archuleta': found = {'pr':'9','w':'','pq':'3','mhiq':'3'}; break;
-            case 'Baca': found = {'pr':'6','w':'','pq':'5','mhiq':'5'}; break;
-            case 'Bent': found = {'pr':'6','w':'','pq':'4','mhiq':'5'}; break;
-            case 'Boulder': found = {'pr':'3','w':'','pq':'1','mhiq':'1'}; break;
-            case 'Broomfield': found = {'pr':'3','w':'','pq':'1','mhiq':'1'}; break;
-            case 'Chaffee': found = {'pr':'13','w':'','pq':'3','mhiq':'3'}; break;
-            case 'Cheyenne': found = {'pr':'5','w':'','pq':'5','mhiq':'3'}; break;
-            case 'Clear Creek': found = {'pr':'3','w':'','pq':'3','mhiq':'1'}; break;
-            case 'Conejos': found = {'pr':'8','w':'','pq':'4','mhiq':'5'}; break;
-            case 'Costilla': found = {'pr':'8','w':'','pq':'5','mhiq':'5'}; break;
-            case 'Crowley': found = {'pr':'6','w':'','pq':'4','mhiq':'5'}; break;
-            case 'Custer': found = {'pr':'13','w':'','pq':'5','mhiq':'5'}; break;
-            case 'Delta': found = {'pr':'10','w':'','pq':'2','mhiq':'4'}; break;
-            case 'Denver': found = {'pr':'3','w':'','pq':'1','mhiq':'3'}; break;
-            case 'Dolores': found = {'pr':'9','w':'','pq':'5','mhiq':'5'}; break;
-            case 'Douglas': found = {'pr':'3','w':'','pq':'1','mhiq':'1'}; break;
-            case 'Eagle': found = {'pr':'12','w':'','pq':'2','mhiq':'1'}; break;
-            case 'Elbert': found = {'pr':'5','w':'','pq':'2','mhiq':'1'}; break;
-            case 'El Paso': found = {'pr':'4','w':'','pq':'1','mhiq':'2'}; break;
-            case 'Fremont': found = {'pr':'13','w':'','pq':'2','mhiq':'4'}; break;
-            case 'Garfield': found = {'pr':'11','w':'','pq':'1','mhiq':'2'}; break;
-            case 'Gilpin': found = {'pr':'3','w':'','pq':'4','mhiq':'1'}; break;
-            case 'Grand': found = {'pr':'12','w':'','pq':'3','mhiq':'1'}; break;
-            case 'Gunnison': found = {'pr':'10','w':'','pq':'3','mhiq':'3'}; break;
-            case 'Hinsdale': found = {'pr':'10','w':'','pq':'5','mhiq':'2'}; break;
-            case 'Huerfano': found = {'pr':'14','w':'','pq':'4','mhiq':'5'}; break;
-            case 'Jackson': found = {'pr':'12','w':'','pq':'5','mhiq':'4'}; break;
-            case 'Jefferson': found = {'pr':'3','w':'','pq':'1','mhiq':'1'}; break;
-            case 'Kiowa': found = {'pr':'6','w':'','pq':'5','mhiq':'4'}; break;
-            case 'Kit Carson': found = {'pr':'5','w':'','pq':'4','mhiq':'3'}; break;
-            case 'Lake': found = {'pr':'13','w':'','pq':'4','mhiq':'3'}; break;
-            case 'La Plata': found = {'pr':'9','w':'','pq':'2','mhiq':'2'}; break;
-            case 'Larimer': found = {'pr':'2','w':'','pq':'1','mhiq':'2'}; break;
-            case 'Las Animas': found = {'pr':'14','w':'','pq':'3','mhiq':'4'}; break;
-            case 'Lincoln': found = {'pr':'5','w':'','pq':'4','mhiq':'4'}; break;
-            case 'Logan': found = {'pr':'1','w':'','pq':'2','mhiq':'4'}; break;
-            case 'Mesa': found = {'pr':'11','w':'','pq':'1','mhiq':'3'}; break;
-            case 'Mineral': found = {'pr':'8','w':'','pq':'5','mhiq':'3'}; break;
-            case 'Moffat': found = {'pr':'11','w':'','pq':'3','mhiq':'2'}; break;
-            case 'Montezuma': found = {'pr':'9','w':'','pq':'2','mhiq':'4'}; break;
-            case 'Montrose': found = {'pr':'10','w':'','pq':'2','mhiq':'3'}; break;
-            case 'Morgan': found = {'pr':'1','w':'','pq':'2','mhiq':'3'}; break;
-            case 'Otero': found = {'pr':'6','w':'','pq':'2','mhiq':'5'}; break;
-            case 'Ouray': found = {'pr':'10','w':'','pq':'4','mhiq':'1'}; break;
-            case 'Park': found = {'pr':'4','w':'','pq':'3','mhiq':'2'}; break;
-            case 'Phillips': found = {'pr':'1','w':'','pq':'5','mhiq':'4'}; break;
-            case 'Pitkin': found = {'pr':'12','w':'','pq':'3','mhiq':'1'}; break;
-            case 'Prowers': found = {'pr':'6','w':'','pq':'3','mhiq':'5'}; break;
-            case 'Pueblo': found = {'pr':'7','w':'','pq':'1','mhiq':'4'}; break;
-            case 'Rio Blanco': found = {'pr':'11','w':'','pq':'4','mhiq':'2'}; break;
-            case 'Rio Grande': found = {'pr':'8','w':'','pq':'3','mhiq':'4'}; break;
-            case 'Routt': found = {'pr':'11','w':'','pq':'2','mhiq':'2'}; break;
-            case 'Saguache': found = {'pr':'8','w':'','pq':'4','mhiq':'5'}; break;
-            case 'San Juan': found = {'pr':'9','w':'','pq':'5','mhiq':'4'}; break;
-            case 'San Miguel': found = {'pr':'10','w':'','pq':'4','mhiq':'1'}; break;
-            case 'Sedgwick': found = {'pr':'1','w':'','pq':'5','mhiq':'4'}; break;
-            case 'Summit': found = {'pr':'12','w':'','pq':'2','mhiq':'1'}; break;
-            case 'Teller': found = {'pr':'4','w':'','pq':'2','mhiq':'2'}; break;
-            case 'Washington': found = {'pr':'1','w':'','pq':'4','mhiq':'3'}; break;
-            case 'Weld': found = {'pr':'2','w':'','pq':'1','mhiq':'2'}; break;
-            case 'Yuma': found = {'pr':'1','w':'','pq':'3','mhiq':'3'}; break;
-            
-  }
-        if($("#classify").val()=='none'){return '5';}
-        if($("#classify").val()=='pr'){return found.pr;}
-        if($("#classify").val()=='w'){return found.w;}
-        if($("#classify").val()=='pq'){return found.pq;}
-        if($("#classify").val()=='mhiq'){return found.mhiq;}
-        
-}
-      
-     
-    } //end submitbtn
-  
-
-  function createQuadrantChart(data,setup){
-
-//Options
-var width = setup.width || 800,
-    height = setup.height || 600,
-    dotRadius = setup.dotRadius || 3, 
-    dotcolor = setup.dotcolor || 'black', 
-    xtype = setup.xtype || ".0f",
-    ytype = setup.ytype || ".0f",
-    ztype = setup.ztype || ".0f",
-    gridSpacing = setup.gridSpacing || 10,
-    topspace = setup.topspace || 60,
-    lbuffer= setup.lbuffer || 100,
-    rbuffer= setup.rbuffer || 40,
-    bottomspace= setup.bottomspace || 60,
-    title= setup.title || "",
-    xlabel= setup.xlabel || "",
-    ylabel= setup.ylabel || "",
-    quadrantxaxis = setup.quadrantxaxis || 0,
-    quadrantyaxis = setup.quadrantyaxis || 0,
-    quadrantaxiscolor = setup.quadrantaxiscolor || 'grey',
-    quadrantaxiswidth = setup.quadrantaxiswidth || '2px',
-    quadrantaxisopacity = setup.quadrantaxisopacity || '0.5',
-    svgborderwidth = setup.svgborderwidth || '1px ',
-    svgbordercolor = setup.svgbordercolor || ' #ccc',
-    gridlinesstroke = setup.gridlinesstroke || 'steelblue', 
-    gridlineswidth = setup.gridlineswidth || '0.5px',
-    gridlinesopacity = setup.gridlinesopacity || '0.5',
-    axislinewidth = setup.axislinewidth || '1px',
-    axislinecolor = setup.axislinecolor || 'black',
-    axisopacity = setup.axisopacity || '0.5',
-    axistextsize = setup.axistextsize || '10px',
-    axistextcolor = setup.axistextcolor || 'black',
-    item_min_ptsize = setup.item_min_ptsize || 3,
-    item_max_ptsize = setup.item_max_ptsize || 8,
-    dotstroke = setup.dotstroke || 'none',
-    dotstrokewidth = setup.dotstrokewidth || '0px',
-    itemslabel = setup.itemslabel || 'true',
-    itemsfontsize = setup.itemsfontsize || '10px',
-    itemsfontcolor = setup.itemsfontcolor || 'black',
-    titlefontsize = setup.titlefontsize || '24px',
-    titlefontcolor = setup.titlefontcolor || 'black',
-    axislabelsize = setup.axislabelsize || '20px',
-    axislabelcolor = setup.axislabelcolor || 'black'
-;  
-
-//min and max data values (for setting up axis)  
-var min_x = d3.min(data, function(d) {
-  return d.x;
-});
-var min_y = d3.min(data, function(d) {
-  return d.y;
-});
-var max_x = d3.max(data, function(d) {
-  return d.x;
-});
-var max_y = d3.max(data, function(d) {
-  return d.y;
-});
-  
-  
-var min_size, max_size, no_z=false, no_category=false, categoryarray=[];
-  
-//whether or not z-value is given (otherwise default dotRadius)
-if(!data[0].z){
-  no_z=true;
-}else{
-// dot size range  
-  min_size = d3.min(data, function(d) {
-    return d.z;
-  });
-  max_size = d3.max(data, function(d) {
-    return d.z;
-  });
-  var cscale = d3.scale.linear().domain([min_size,max_size]).range([item_min_ptsize,item_max_ptsize]);
-}
-    
-//whether or not category is given (otherwise default dotcolor)    
-if(!data[0].category){
-  no_category=true;
-}else{
-  for(var count=0; count<data.length; count=count+1){
-    categoryarray.push(data[count].category);
-  }
-  
-  //remove duplicates function
-  function uniq_fast(a) {
-    var seen = {};
-    var out = [];
-    var len = a.length;
-    var j = 0;
-    for(var i = 0; i < len; i++) {
-         var item = a[i];
-         if(seen[item] !== 1) {
-               seen[item] = 1;
-               out[j++] = item;
-         }
-    }
-    return out;
-}
-  //12 unique colors based on colorbrewer
-  var c20 = d3.scale.ordinal().domain([]).range(["#1f78b4", "#33a02c" , "#e31a1c", "#ff7f00" , "#6a3d9a", "#b15928",  "#a6cee3", "#b2df8a" , "#fb9a99", "#fdbf6f" , "#cab2d6", "#ffff99"]);
-  //add more schemes later
-  
-//remove duplicates
-  var newarray=uniq_fast(categoryarray);
-  
-  //statement below to change color schemes depending on number of unique classes
-  //if(newarray.length<11){c20=d3.scale.category10();}else{c20=d3.scale.category20();}
-
-  var colorscale =c20;
-
-  
-}    
-  
-//buffer the axis ranges so that points arent on edge of graph  
-var buffer_x = ((max_x)-(min_x))*.03; //3% buffer
-var buffer_y = ((max_y)-(min_y))*.03; //3% buffer  
-  
-var svg = d3.select("#svgcontainer").append("svg")
-    .attr("width",width) //+lbuffer+rbuffer
-    .attr("height",height) //+bottomspace+topspace
-    .style({'border': svgborderwidth+'solid'+svgbordercolor});
-
-//Scales for item positions
-var x = d3.scale.linear().domain([min_x-buffer_x,max_x+buffer_x]).range([lbuffer,(width-rbuffer)]);
-var y = d3.scale.linear().domain([min_y-buffer_y,max_y+buffer_y]).range([height-bottomspace,topspace]);
-
-
-//gridlines
-svg.append("path")
-  .attr("d",function() {
-    var d = "";
-
-    for (var i = lbuffer; i < (width-rbuffer)+gridSpacing; i += gridSpacing ) {
-      d += "M"+(i)+","+topspace+" L"+i+","+(height-bottomspace);
-    }
-
-    for (var i = topspace; i < (height-bottomspace)+gridSpacing; i += gridSpacing ) {
-      d += "M"+lbuffer+","+(i)+" L"+(width-rbuffer)+","+(i);
-    }
-
-    return d;
-  }).style({'stroke': gridlinesstroke, 'stroke-width': gridlineswidth, 'opacity': gridlinesopacity});
-
-
-//quadrant axes
-svg.append("path")
-  .attr("d","M"+lbuffer+","+(((y(quadrantyaxis)))+0)+" L"+(width-rbuffer)+","+(((y(quadrantyaxis)+0))))
-  .attr("stroke", quadrantaxiscolor)
-  .attr("stroke-width", quadrantaxiswidth)
-  .attr('opacity', quadrantaxisopacity)
-  .append("svg:title")
-   .text(setup.quadrantyaxis);
-
-svg.append("path")
-  .attr("d","M"+(x(quadrantxaxis))+","+topspace+" L"+(x(quadrantxaxis))+","+(height-bottomspace))
-  .attr("stroke", quadrantaxiscolor)
-  .attr("stroke-width", quadrantaxiswidth)
-  .attr('opacity', quadrantaxisopacity)
-  .append("svg:title")
-   .text(setup.quadrantxaxis);
-  
-  var xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(d3.format(xtype)); 
-  var yAxis = d3.svg.axis().scale(y).orient("left").tickFormat(d3.format(ytype)); 
- 
-  var xAxisGroup = svg.append("g") //
-    .attr("class", "xaxis")
-    .attr("transform", "translate("+0+"," + (height-topspace) + ")")
-    .call(xAxis);
-
-      
-  xAxisGroup.selectAll('.xaxis line, .xaxis path')
-     .style({'stroke': axislinecolor, 'fill': 'none', 'stroke-width': axislinewidth, 'opacity': axisopacity});
-  
-  xAxisGroup.selectAll('.xaxis text')
-     .style({'stroke': axistextcolor, 'font-size': axistextsize, 'opacity': axisopacity});
-  
-  var yAxisGroup = svg.append("g")
-      .attr("class", "yaxis")
-      .attr("transform", "translate("+lbuffer+", "+0+")")
-      .call(yAxis);
-  
-  yAxisGroup.selectAll('.yaxis line, .yaxis path')
-     .style({'stroke': axislinecolor, 'fill': 'none', 'stroke-width': axislinewidth, 'opacity': axisopacity});  
-  
-  yAxisGroup.selectAll('.yaxis text')
-     .style({'stroke': axistextcolor, 'font-size': axistextsize, 'opacity': axisopacity});
-  
-  
-//One group per item
-var items = svg.selectAll("g.item").data(data).enter().append("g");
-
-  
-  
-//Add a dot
-items.append("circle")
-  .attr("r", function(d){
-  if(no_z){return dotRadius;}else{return cscale(d.z);}
-})
-  .attr("cx",function(d){
-    return x(d.x);
-  })
-  .attr("cy",function(d){
-    return y(d.y);
-  })
-.style({'fill': function(d){
-  if(no_category){
-    return dotcolor;
-  }else{
-    for(var i=0; i<newarray.length; i=i+1){
-      if(d.category==newarray[i]){return colorscale(i);}
-    }
-  }
-
-}, 'stroke': dotstroke, 'stroke-width': dotstrokewidth})
-  .append("svg:title")
-   .text(function(d) { 
-  var xformatter=d3.format(xtype); 
-  var yformatter=d3.format(ytype); 
-  var zformatter=d3.format(ztype); 
-  return d.label+"\nx:\u00A0\u00A0"+xformatter(d.x)+"\ny:\u00A0\u00A0"+yformatter(d.y)+"\nz:\u00A0\u00A0"+zformatter(d.z); 
-});
-
-    
-if(itemslabel==='true'){  
-  
-var textLabels = items.append("text")
-  .attr("x",function(d){
-    return x(d.x);
-  })
-  .attr("y",function(d){
-    return y(d.y);
-  })
-  .attr("dy","1.25em")
-  .attr("text-anchor","middle")
-  .text(function(d){return d.label;})
-.style({'font-size': itemsfontsize, 'fill': itemsfontcolor});
-  
-}
-
-  //xaxis
-svg.append("text")
-    .attr("text-anchor", "middle")
-    .attr("x", ((width-rbuffer-lbuffer)/2)+lbuffer)
-    .attr("y", (height - 10))
-    .text(setup.xlabel)
-.style({'font-size': axislabelsize, 'fill': axislabelcolor});  
-  
-  //yaxis
-svg.append("text")
-    .attr("text-anchor", "middle")
-    .attr("y", 27)
-    .attr("x", -(((height-bottomspace-topspace)/2)+(topspace)))
-    .attr("transform", "rotate(-90)")
-    .text(setup.ylabel)
-  .style({'font-size': axislabelsize, 'fill': axislabelcolor});    
-  
-  //title
-svg.append("text")
-    .attr("text-anchor", "middle")
-    .attr("x", ((width-rbuffer-lbuffer)/2)+lbuffer)
-    .attr("y", (topspace/2)+5)
-    .text(setup.title)  
-  .style({'font-size': titlefontsize, 'fill': titlefontcolor});    
-  
-  }
-  
-  
-
+      <div class="col-md-1"></div>
+    </div><!-- end row -->
+  </div><!-- end container --><script src=
+  "//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript">
+</script><script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"
+  type="text/javascript">
+</script><script src="http://d3js.org/d3.v3.min.js" type="text/javascript">
+</script><script src="../CensusAPI_Map/assets/js/datatree.js" type="text/javascript">
+</script><script src="js/createQuadrantChart.js" type="text/javascript">  
+</script><script src="js/app.js" type="text/javascript">
 </script>
-  
-<div id="datadiv">
-  <p><b>Data:</b> <a href="http://www.census.gov/acs/www/" target="_blank">ACS 2009-2013 5-Year Estimates</a></p>
-  <p><b>Created by:</b> <a href="http://www.colorado.gov/demography" target="_blank">Colorado State Demography Office</a></p>
-</div>
-  
-  
+
+  <div id="datadiv">
+    <p><b>Data:</b> <a href="http://www.census.gov/acs/www/" target="_blank">ACS
+    2009-2013 5-Year Estimates</a></p>
+
+    <p><b>Created by:</b> <a href="http://www.colorado.gov/demography" target=
+    "_blank">Colorado State Demography Office</a></p>
+  </div>
 </body>
+</html>

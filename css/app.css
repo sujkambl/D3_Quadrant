@@ -1,0 +1,24 @@
+  
+svg{
+  shape-rendering: geometricPrecision; 
+}
+  
+.spacer{
+  padding-top: 20px;
+}
+    
+.spacerbig{
+  padding-top: 40px;
+}
+  
+  #datadiv { 
+    position: absolute;
+    display: block;
+    bottom: 5px;
+    left: 5px;
+}
+  
+  #sidebar{
+    
+    margin-right: 50px;
+  }
