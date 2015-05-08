@@ -14,8 +14,9 @@ svg{
   #datadiv { 
     position: absolute;
     display: block;
-    bottom: 5px;
+    top: 5px;
     left: 5px;
+    font-size: 10px;
 }
   
   #sidebar{

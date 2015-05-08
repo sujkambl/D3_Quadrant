@@ -22,7 +22,7 @@ var width = setup.width || 800,
     quadrantaxiscolor = setup.quadrantaxiscolor || 'grey',
     quadrantaxiswidth = setup.quadrantaxiswidth || '2px',
     quadrantaxisopacity = setup.quadrantaxisopacity || '0.5',
-    svgborderwidth = setup.svgborderwidth || '1px ',
+    svgborderwidth = setup.svgborderwidth || '2px ',
     svgbordercolor = setup.svgbordercolor || ' #ccc',
     gridlinesstroke = setup.gridlinesstroke || 'steelblue', 
     gridlineswidth = setup.gridlineswidth || '0.5px',
@@ -139,10 +139,14 @@ function sortAlphaNum(a,b) {
 var buffer_x = ((max_x)-(min_x))*.03; //3% buffer
 var buffer_y = ((max_y)-(min_y))*.03; //3% buffer  
   
-var svg = d3.select("#"+div).append("svg")
+var svg = d3.select("#"+div).append("svg").attr("id","svgel")
     .attr("width",width) //+lbuffer+rbuffer
-    .attr("height",height) //+bottomspace+topspace
-    .style({'border': svgborderwidth+'solid'+svgbordercolor});
+    .attr("height",height); //+bottomspace+topspace
+    
+    svg.append("rect")
+    .attr("width",width) //+lbuffer+rbuffer
+    .attr("height",height) //+bottomspace+topspace      
+    .style({'fill':'white','fill-opacity':'0','stroke-width': svgborderwidth,'stroke':svgbordercolor});
 
 //Scales for item positions
 var x = d3.scale.linear().domain([min_x-buffer_x,max_x+buffer_x]).range([lbuffer,(width-rbuffer)]);
@@ -241,7 +245,7 @@ items.append("circle")
   var xformatter=d3.format(xtype); 
   var yformatter=d3.format(ytype); 
   var zformatter=d3.format(ztype); 
-  return d.label+"\nx:\u00A0\u00A0"+xformatter(d.x)+"\ny:\u00A0\u00A0"+yformatter(d.y)+"\nz:\u00A0\u00A0"+zformatter(d.z); 
+  return d.label+"\nx: _ _ "+xformatter(d.x)+"\ny: _ _ "+yformatter(d.y)+"\nz: _ _ "+zformatter(d.z); 
 });
 
     
@@ -287,5 +291,4 @@ svg.append("text")
   .style({'font-size': titlefontsize, 'fill': titlefontcolor});    
   
   }
-  
   

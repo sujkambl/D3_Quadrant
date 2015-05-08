@@ -141,6 +141,9 @@
         if($('#classify').val()=='none'){newsetuparray.colorschemetype='none';}
         
       createQuadrantChart("svgcontainer", newdataarray, newsetuparray);
+        
+
+  //saveSvgAsPng(document.getElementById("svgel"), "diagram.png");
       
     });
       
