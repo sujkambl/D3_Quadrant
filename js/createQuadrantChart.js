@@ -4,9 +4,9 @@
 //Options
 var width = setup.width || 800,
     height = setup.height || 600,
-    dotRadius = setup.dotRadius || 3, 
+    dotRadius = setup.dotRadius || 4, 
     dotcolor = setup.dotcolor || 'maroon', 
-    xtype = setup.xtype || ".0f",
+    xtype = setup.xtype || ".0f",  //add precision here on other side
     ytype = setup.ytype || ".0f",
     ztype = setup.ztype || ".0f",
     gridSpacing = setup.gridSpacing || 10,
@@ -23,7 +23,7 @@ var width = setup.width || 800,
     quadrantaxiswidth = setup.quadrantaxiswidth || '2px',
     quadrantaxisopacity = setup.quadrantaxisopacity || '0.5',
     svgborderwidth = setup.svgborderwidth || '2px ',
-    svgbordercolor = setup.svgbordercolor || ' #ccc',
+    svgbordercolor = setup.svgbordercolor || '#ccc',
     gridlinesstroke = setup.gridlinesstroke || 'steelblue', 
     gridlineswidth = setup.gridlineswidth || '0.5px',
     gridlinesopacity = setup.gridlinesopacity || '0.5',
@@ -32,8 +32,8 @@ var width = setup.width || 800,
     axisopacity = setup.axisopacity || '0.5',
     axistextsize = setup.axistextsize || '10px',
     axistextcolor = setup.axistextcolor || 'black',
-    item_min_ptsize = setup.item_min_ptsize || 3,
-    item_max_ptsize = setup.item_max_ptsize || 8,
+    item_min_ptsize = setup.item_min_ptsize || 2,
+    item_max_ptsize = setup.item_max_ptsize || 10,
     dotstroke = setup.dotstroke || 'none',
     dotstrokewidth = setup.dotstrokewidth || '0px',
     itemslabel = setup.itemslabel || 'true',
@@ -43,7 +43,7 @@ var width = setup.width || 800,
     titlefontcolor = setup.titlefontcolor || 'black',
     axislabelsize = setup.axislabelsize || '20px',
     axislabelcolor = setup.axislabelcolor || 'black',
-    colorschemetype = setup.colorschemetype || 'unique'
+    colorschemetype = setup.colorschemetype || 'unique'    
 ;  
 
 //min and max data values (for setting up axis)  
@@ -177,7 +177,10 @@ svg.append("path")
   .attr("stroke-width", quadrantaxiswidth)
   .attr('opacity', quadrantaxisopacity)
   .append("svg:title")
-   .text(setup.quadrantyaxis);
+   .text(function(d){
+  var formatter=d3.format(ytype);
+  return formatter(setup.quadrantyaxis);
+});
 
 svg.append("path")
   .attr("d","M"+(x(quadrantxaxis))+","+topspace+" L"+(x(quadrantxaxis))+","+(height-bottomspace))
@@ -185,8 +188,11 @@ svg.append("path")
   .attr("stroke-width", quadrantaxiswidth)
   .attr('opacity', quadrantaxisopacity)
   .append("svg:title")
-   .text(setup.quadrantxaxis);
-  
+   .text(function(d){
+  var formatter=d3.format(xtype);
+  return formatter(setup.quadrantxaxis);
+});
+
   var xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(d3.format(xtype)); 
   var yAxis = d3.svg.axis().scale(y).orient("left").tickFormat(d3.format(ytype)); 
  
@@ -245,7 +251,7 @@ items.append("circle")
   var xformatter=d3.format(xtype); 
   var yformatter=d3.format(ytype); 
   var zformatter=d3.format(ztype); 
-  return d.label+"\nx: _ _ "+xformatter(d.x)+"\ny: _ _ "+yformatter(d.y)+"\nz: _ _ "+zformatter(d.z); 
+  return d.label+"\nX = "+xformatter(d.x)+"\nY = "+yformatter(d.y)+"\nZ = "+zformatter(d.z); 
 });
 
     

@@ -16,13 +16,10 @@
 
 <body>
   <div class="container-fluid">
-    <div class="row" style="padding-top: 30px;">
-      <div class="col-md-8">
-        <div id="svgcontainer"></div>
-      </div>
-
+    <div class="row" style="padding-top: 40px;">
       <div class="col-md-3">
         <div id="sidebar">
+          <div class="spacerbig"></div>
           <label for="selectgeo">Geography:</label><br />
           <select class="varselect" id="selectgeo" tabindex="1">
             <option value="cc" selected="selected">
@@ -68,15 +65,69 @@
             </option>
           </select>
 
-          <div class="spacer"></div><button type="button" onclick="submitbtn();"
-          tabindex="6" accesskey="s">Submit</button>
+          <div class="spacer"></div>
+          <div class="spacer"></div>
+          <button type="button" onclick="modal();" tabindex="6" accesskey="a">Style Options</button>
+          <div class="spacer"></div>
+          <div class="spacer"></div>
+          <div class="spacer"></div>  
+          <button type="button" onclick="submitbtn();" tabindex="7" accesskey="s">Submit</button>
+          <div class="spacer"></div>            
         </div><!-- end sidebar -->
-      </div><!-- end col-md-3 -->
+      </div>
+      
+      <div class="col-md-9">
+        <div id="svgcontainer"><svg width="800" height="600"><rect width="800" height="600" style="fill:#fff;stroke-width:2px;stroke:rgb(204, 204, 204)" /></svg></div>
+      </div>
 
-      <div class="col-md-1"></div>
     </div><!-- end row -->
-  </div><!-- end container --><script src=
-  "//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript">
+  </div><!-- end container -->
+  
+    <div class="modal fade" id="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Style Options</h4>
+      </div>
+      <div class="modal-body firstdiv"><br />
+        <table>
+          <tr><td>Height (px):</td><td><input id="i_height" value="800" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Width (px):</td><td><input id="i_width" value="600" type="text" /></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>
+          <tr><td>Top Buffer (px):</td><td><input id="i_topbuffer" value="60" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bottom Buffer (px):</td><td><input id="i_bottombuffer" value="60" type="text" /></td></tr>
+          <tr><td>Left Buffer (px):</td><td><input id="i_leftbuffer" value="100" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Right Buffer (px):</td><td><input id="i_rightbuffer" value="40" type="text" /></td></tr>    
+          <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>          
+          <tr><td>Title:</td><td><input id="i_title" value="" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Title Font Size (px):</td><td><input id="i_titlefontsize" value="24" type="text" /></td></tr>       
+          <tr><td>Title Font Color:</td><td><input id="i_titlefontcolor" value="black" type="text" /></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>       
+          <tr><td>X Axis Label:</td><td><input id="i_xaxislabel" value="" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y Axis Label:</td><td><input id="i_yaxislabel" value="" type="text" /></td></tr>  
+          <tr><td>Axis Label Font Size (px):</td><td><input id="i_axislabelfontsize" value="20" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Axis Label Color:</td><td><input id="i_axislabelcolor" value="black" type="text" /></td></tr>  
+          <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>       
+          <tr><td>Axis Line Width (px):</td><td><input id="i_axislineewidth" value="1" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Axis Line Color:</td><td><input id="i_axislinecolor" value="black" type="text" /></td></tr>  
+          <tr><td>Axis Opacity (0-1):</td><td><input id="i_axisopacity" value="0.5" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Axis Text Size (px):</td><td><input id="i_axistextsize" value="10" type="text" /></td></tr>  
+          <tr><td>Axis Text Color:</td><td><input id="i_axistextcolor" value="black" type="text" /></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>    
+          <tr><td>Quadrant Axis Color:</td><td><input id="i_quadrantaxiscolor" value="grey" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quadrant Axis Width (px):</td><td><input id="i_quadrantaxiswidth" value="2" type="text" /></td></tr>  
+          <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>    
+          <tr><td>Default Dot Radius (px):</td><td><input id="i_defaultdotradius" value="4" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dot Min Size (px):</td><td><input id="i_dotminsize" value="2" type="text" /></td></tr>  
+          <tr><td>Dot Max Size (px):</td><td><input id="i_dotmaxsize" value="10" type="text" /></td><td></td><td></td></tr>
+          <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>    
+          <tr><td>Dot Color:</td><td><input id="i_dotcolor" value="maroon" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dot Label (true/false):</td><td><input id="i_dotlabel" value="true" type="text" /></td></tr>  
+          <tr><td>Dot Label Font Size (px):</td><td><input id="i_dotlabelfontsize" value="10" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dot Label Font Color:</td><td><input id="i_dotlabelfontcolor" value="black" type="text" /></td></tr>  
+
+          
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-default" onclick="reset();">Reset</button>        
+        <button type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+  
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript">
 </script><script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"
   type="text/javascript">
 </script><script src="http://d3js.org/d3.v3.min.js" type="text/javascript">

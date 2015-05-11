@@ -1,6 +1,19 @@
-  
+.firstdiv input{
+  font-size: 10px;
+  width: 100px;
+}
+
+.firstdiv td{
+  font-size: 12px;
+}
+
 svg{
   shape-rendering: geometricPrecision; 
+}
+
+td{
+  padding-left: 10px !important;
+  padding-bottom: 3px !important;
 }
   
 .spacer{
@@ -19,7 +32,10 @@ svg{
     font-size: 10px;
 }
   
-  #sidebar{
-    
-    margin-right: 50px;
-  }
+#sidebar {
+    left: 0px;
+}
+
+select{
+  width: 240px;
+}
