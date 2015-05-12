@@ -3,7 +3,9 @@ Quadrant-style scatterplot made with d3.js
 
 ##How to Add
 Load as a Javascript Library 
-'''<script src="pathto/createQuadrantChart.js" type="text/javascript"></script>
+'''html
+<script src="pathto/createQuadrantChart.js" type="text/javascript"></script>
+'''
 
 ##How to Call
 Call as a function 
