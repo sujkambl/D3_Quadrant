@@ -32,5 +32,5 @@ setup.dotRadius=4;
 All setup properties are optional; they are preconfigured with smart defaults.
 Here is an inventory of possible properties, along with descriptions:
 
-<b>height<b>: Total Height of the Chart (px)
-<b>width<b>: Total Width of the Chart (px)
+<b>height</b>: Total Height of the Chart (px)
+<b>width</b>: Total Width of the Chart (px)
