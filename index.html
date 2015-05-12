@@ -67,17 +67,18 @@
 
           <div class="spacer"></div>
           <div class="spacer"></div>
-          <button type="button" onclick="modal();" tabindex="6" accesskey="a">Style Options</button>
-          <div class="spacer"></div>
-          <div class="spacer"></div>
-          <div class="spacer"></div>  
-          <button type="button" onclick="submitbtn();" tabindex="7" accesskey="s">Submit</button>
-          <div class="spacer"></div>            
+
+
+          <button type="button" class="btn" onclick="submitbtn();" tabindex="7" accesskey="s">Submit</button>
+         
         </div><!-- end sidebar -->
       </div>
       
       <div class="col-md-9">
-        <div id="svgcontainer"><svg width="800" height="600"><rect width="800" height="600" style="fill:#fff;stroke-width:2px;stroke:rgb(204, 204, 204)" /></svg></div>
+        <div id="svgcontainer"><svg width="800" height="600"><rect width="800" height="600" style="fill:#fff;stroke-width:2px;stroke:rgb(204, 204, 204)" /></svg></div><br />
+                  <div class="spacer"></div>
+          <button type="button" id="t_style" class="btn" onclick="modal();" tabindex="6" accesskey="a">Style Options...</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <button type="button" id="t_download" class="btn" onclick="saveSvgAsPng(document.getElementById('svgel'), 'diagram.png');" tabindex="8" accesskey="i">Download PNG</button>
       </div>
 
     </div><!-- end row -->
@@ -92,36 +93,36 @@
       </div>
       <div class="modal-body firstdiv"><br />
         <table>
-          <tr><td>Height (px):</td><td><input id="i_height" value="800" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Width (px):</td><td><input id="i_width" value="600" type="text" /></td></tr>
+          <tr><td>Height (px):</td><td><input id="i_height" value=600 type="number"  min="50" max="2000" step="50" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Width (px):</td><td><input id="i_width" value="800"  min="50" max="2000" step="50" type="number" /></td></tr>
           <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>
-          <tr><td>Top Buffer (px):</td><td><input id="i_topbuffer" value="60" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bottom Buffer (px):</td><td><input id="i_bottombuffer" value="60" type="text" /></td></tr>
-          <tr><td>Left Buffer (px):</td><td><input id="i_leftbuffer" value="100" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Right Buffer (px):</td><td><input id="i_rightbuffer" value="40" type="text" /></td></tr>    
+          <tr><td>Top Buffer (px):</td><td><input id="i_topbuffer" value="60" type="number" min="0" max="200" step="10" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bottom Buffer (px):</td><td><input id="i_bottombuffer" value="60" type="number"  min="0" max="200" step="10" /></td></tr>
+          <tr><td>Left Buffer (px):</td><td><input id="i_leftbuffer" value="100" type="number"  min="0" max="200" step="10" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Right Buffer (px):</td><td><input id="i_rightbuffer" value="40" type="number"  min="0" max="200" step="10" /></td></tr>    
           <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>          
-          <tr><td>Title:</td><td><input id="i_title" value="" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Title Font Size (px):</td><td><input id="i_titlefontsize" value="24" type="text" /></td></tr>       
-          <tr><td>Title Font Color:</td><td><input id="i_titlefontcolor" value="black" type="text" /></td><td></td><td></td></tr>
+          <tr><td>Title:</td><td><input id="i_title" value="" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Title Font Size (px):</td><td><input id="i_titlefontsize" value="24" type="number" /></td></tr>       
+          <tr><td>Title Font Color:</td><td><input id="i_titlefontcolor" value="#000000" type="color" /></td><td></td><td></td></tr>
           <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>       
           <tr><td>X Axis Label:</td><td><input id="i_xaxislabel" value="" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y Axis Label:</td><td><input id="i_yaxislabel" value="" type="text" /></td></tr>  
-          <tr><td>Axis Label Font Size (px):</td><td><input id="i_axislabelfontsize" value="20" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Axis Label Color:</td><td><input id="i_axislabelcolor" value="black" type="text" /></td></tr>  
+          <tr><td>Axis Label Font Size (px):</td><td><input id="i_axislabelfontsize" value="20" type="number" min="4" max="50" step="1" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Axis Label Color:</td><td><input id="i_axislabelcolor" value="#000000" type="color" /></td></tr>  
           <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>       
-          <tr><td>Axis Line Width (px):</td><td><input id="i_axislineewidth" value="1" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Axis Line Color:</td><td><input id="i_axislinecolor" value="black" type="text" /></td></tr>  
-          <tr><td>Axis Opacity (0-1):</td><td><input id="i_axisopacity" value="0.5" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Axis Text Size (px):</td><td><input id="i_axistextsize" value="10" type="text" /></td></tr>  
-          <tr><td>Axis Text Color:</td><td><input id="i_axistextcolor" value="black" type="text" /></td><td></td><td></td></tr>
+          <tr><td>Axis Line Width (px):</td><td><input id="i_axislineewidth" value="1" type="text"  min="0" max="4" step="0.5" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Axis Line Color:</td><td><input id="i_axislinecolor" value="#000000" type="color" /></td></tr>  
+          <tr><td>Axis Opacity (0-1):</td><td><input id="i_axisopacity" value="0.5" min="0" max="1"  step="0.1" type="number" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Axis Text Size (px):</td><td><input id="i_axistextsize" value="10" type="number"  min="4" max="50" step="1" /></td></tr>  
+          <tr><td>Axis Text Color:</td><td><input id="i_axistextcolor" value="#000000" type="color" /></td><td></td><td></td></tr>
           <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>    
-          <tr><td>Quadrant Axis Color:</td><td><input id="i_quadrantaxiscolor" value="grey" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quadrant Axis Width (px):</td><td><input id="i_quadrantaxiswidth" value="2" type="text" /></td></tr>  
+          <tr><td>Quadrant Axis Color:</td><td><input id="i_quadrantaxiscolor" value="#808080" type="color" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quadrant Axis Width (px):</td><td><input id="i_quadrantaxiswidth" value="2" type="number"  min="0" max="4" step="0.5" /></td></tr>  
           <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>    
-          <tr><td>Default Dot Radius (px):</td><td><input id="i_defaultdotradius" value="4" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dot Min Size (px):</td><td><input id="i_dotminsize" value="2" type="text" /></td></tr>  
-          <tr><td>Dot Max Size (px):</td><td><input id="i_dotmaxsize" value="10" type="text" /></td><td></td><td></td></tr>
+          <tr><td>Default Dot Radius (px):</td><td><input id="i_defaultdotradius" value="4" type="number"  min="0" max="40" step="1" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dot Min Size (px):</td><td><input id="i_dotminsize" value="2" type="number"  min="0" max="40" step="1" /></td></tr>  
+          <tr><td>Dot Max Size (px):</td><td><input id="i_dotmaxsize" value="10" type="number"  min="0" max="40" step="1" /></td><td></td><td></td></tr>
           <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>    
-          <tr><td>Dot Color:</td><td><input id="i_dotcolor" value="maroon" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dot Label (true/false):</td><td><input id="i_dotlabel" value="true" type="text" /></td></tr>  
-          <tr><td>Dot Label Font Size (px):</td><td><input id="i_dotlabelfontsize" value="10" type="text" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dot Label Font Color:</td><td><input id="i_dotlabelfontcolor" value="black" type="text" /></td></tr>  
+          <tr><td>Default Dot Color:</td><td><input id="i_dotcolor" value="#800000" type="color" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dot Label (true/false):</td><td><input id="i_dotlabel" value="true" type="boolean" /></td></tr>  
+          <tr><td>Dot Label Font Size (px):</td><td><input id="i_dotlabelfontsize" value="10" type="number"  min="4" max="50" step="1" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dot Label Font Color:</td><td><input id="i_dotlabelfontcolor" value="#000000" type="color" /></td></tr>  
 
           
         </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-default" onclick="cancel();" data-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-default" onclick="reset();">Reset</button>        
-        <button type="button" class="btn btn-default" data-dismiss="modal">Submit</button>
+        <button type="button" class="btn btn-default" onclick="stylesubmit();" data-dismiss="modal">Submit</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -140,7 +141,8 @@
   <div id="datadiv">
     <p><b>Data:</b> <a href="http://www.census.gov/acs/www/" target="_blank">ACS
     2009-2013 5-Year Estimates</a>&nbsp;&nbsp;&nbsp;<b>Created by:</b> <a href="http://www.colorado.gov/demography" target=
-    "_blank">Colorado State Demography Office</a></p>
+    "_blank">Colorado State Demography Office</a>&nbsp;&nbsp;&nbsp;<b>Project Homepage:</b> <a href="https://github.com/royhobbstn/D3_Quadrant" target=
+    "_blank">Github: D3 Quadrant Chart</a></p>
   </div>
 </body>
 </html>

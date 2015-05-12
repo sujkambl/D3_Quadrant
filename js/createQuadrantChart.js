@@ -1,11 +1,11 @@
 
-  function createQuadrantChart(div, data, setup){
+ function createQuadrantChart(div, data, setup){
 
 //Options
 var width = setup.width || 800,
     height = setup.height || 600,
     dotRadius = setup.dotRadius || 4, 
-    dotcolor = setup.dotcolor || 'maroon', 
+    dotcolor = setup.dotcolor || '#800000', 
     xtype = setup.xtype || ".0f",  //add precision here on other side
     ytype = setup.ytype || ".0f",
     ztype = setup.ztype || ".0f",
@@ -19,7 +19,7 @@ var width = setup.width || 800,
     ylabel= setup.ylabel || "",
     quadrantxaxis = setup.quadrantxaxis || 0,
     quadrantyaxis = setup.quadrantyaxis || 0,
-    quadrantaxiscolor = setup.quadrantaxiscolor || 'grey',
+    quadrantaxiscolor = setup.quadrantaxiscolor || '#808080',
     quadrantaxiswidth = setup.quadrantaxiswidth || '2px',
     quadrantaxisopacity = setup.quadrantaxisopacity || '0.5',
     svgborderwidth = setup.svgborderwidth || '2px ',
@@ -28,23 +28,24 @@ var width = setup.width || 800,
     gridlineswidth = setup.gridlineswidth || '0.5px',
     gridlinesopacity = setup.gridlinesopacity || '0.5',
     axislinewidth = setup.axislinewidth || '1px',
-    axislinecolor = setup.axislinecolor || 'black',
+    axislinecolor = setup.axislinecolor || '#000000',
     axisopacity = setup.axisopacity || '0.5',
     axistextsize = setup.axistextsize || '10px',
-    axistextcolor = setup.axistextcolor || 'black',
+    axistextcolor = setup.axistextcolor || '#000000',
     item_min_ptsize = setup.item_min_ptsize || 2,
     item_max_ptsize = setup.item_max_ptsize || 10,
     dotstroke = setup.dotstroke || 'none',
     dotstrokewidth = setup.dotstrokewidth || '0px',
     itemslabel = setup.itemslabel || 'true',
     itemsfontsize = setup.itemsfontsize || '10px',
-    itemsfontcolor = setup.itemsfontcolor || 'black',
+    itemsfontcolor = setup.itemsfontcolor || '#000000',
     titlefontsize = setup.titlefontsize || '24px',
-    titlefontcolor = setup.titlefontcolor || 'black',
+    titlefontcolor = setup.titlefontcolor || '#000000',
     axislabelsize = setup.axislabelsize || '20px',
-    axislabelcolor = setup.axislabelcolor || 'black',
+    axislabelcolor = setup.axislabelcolor || '#000000',
     colorschemetype = setup.colorschemetype || 'unique'    
 ;  
+
 
 //min and max data values (for setting up axis)  
 var min_x = d3.min(data, function(d) {
@@ -296,5 +297,5 @@ svg.append("text")
     .text(setup.title)  
   .style({'font-size': titlefontsize, 'fill': titlefontcolor});    
   
-  }
+  };
   

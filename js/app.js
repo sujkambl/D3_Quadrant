@@ -1,5 +1,24 @@
 
+var selectchange=0;
+
+
+$('#selectgeo').change(function() { selectchange=1; });
+$('#selectx').change(function() { selectchange=1; });
+$('#selecty').change(function() { selectchange=1; });
+$('#selectz').change(function() { selectchange=1; });
+$('#classify').change(function() { selectchange=1; });
+
 var revert={};
+      var newdataarray=[];  
+      var newsetuparray={};
+
+function filterrequest(){
+  if(selectchange===1){
+    submitbtn();
+  }else{
+    stylesubmit();
+  }
+}
 
 function modal(){
   
@@ -31,51 +50,107 @@ function modal(){
   revert.i_dotlabel=$('#i_dotlabel').val();
   revert.i_dotlabelfontsize=$('#i_dotlabelfontsize').val();
   revert.i_dotlabelfontcolor=$('#i_dotlabelfontcolor').val();
-
-console.log(revert);
   
 $('#modal').modal('toggle');
 }
 
 function reset(){
   
-  $('#i_height').val("800");
-  $('#i_width').val("600");
+  $('#i_height').val("600");
+  $('#i_width').val("800");
   $('#i_topbuffer').val("60");
   $('#i_bottombuffer').val("60");
   $('#i_leftbuffer').val("100");
   $('#i_rightbuffer').val("40");
   $('#i_title').val("");
   $('#i_titlefontsize').val("24");
-  $('#i_titlefontcolor').val("black");
+  $('#i_titlefontcolor').val("#000000");
   $('#i_xaxislabel').val("");
   $('#i_yaxislabel').val("");
   $('#i_axislabelfontsize').val("20");
-  $('#i_axislabelcolor').val("black");
+  $('#i_axislabelcolor').val("#000000");
   $('#i_axislineewidth').val("1");
-  $('#i_axislinecolor').val("black");
+  $('#i_axislinecolor').val("#000000");
   $('#i_axisopacity').val("0.5");
   $('#i_axistextsize').val("10");
-  $('#i_axistextcolor').val("black");
-  $('#i_quadrantaxiscolor').val("grey");
+  $('#i_axistextcolor').val("#000000");
+  $('#i_quadrantaxiscolor').val("#808080");
   $('#i_quadrantaxiswidth').val("2");
   $('#i_defaultdotradius').val("4");
   $('#i_dotminsize').val("2");
   $('#i_dotmaxsize').val("10");
-  $('#i_dotcolor').val("maroon");
+  $('#i_dotcolor').val("#800000");
   $('#i_dotlabel').val("true");
   $('#i_dotlabelfontsize').val("10");
-  $('#i_dotlabelfontcolor').val("black");
+  $('#i_dotlabelfontcolor').val("#000000");
   
 }
 
 function cancel(){
   
+  $('#i_height').val(revert.i_height);
+  $('#i_width').val(revert.i_width);
+  $('#i_topbuffer').val(revert.i_topbuffer);
+  $('#i_bottombuffer').val(revert.i_bottombuffer);
+  $('#i_leftbuffer').val(revert.i_leftbuffer);
+  $('#i_rightbuffer').val(revert.i_rightbuffer);
+  $('#i_title').val(revert.i_title);
+  $('#i_titlefontsize').val(revert.i_titlefontsize);
+  $('#i_titlefontcolor').val(revert.i_titlefontcolor);
+  $('#i_xaxislabel').val(revert.i_xaxislabel);
+  $('#i_yaxislabel').val(revert.i_yaxislabel);
+  $('#i_axislabelfontsize').val(revert.i_axislabelfontsize);
+  $('#i_axislabelcolor').val(revert.i_axislabelcolor);
+  $('#i_axislineewidth').val(revert.i_axislineewidth);
+  $('#i_axislinecolor').val(revert.i_axislinecolor);
+  $('#i_axisopacity').val(revert.i_axisopacity);
+  $('#i_axistextsize').val(revert.i_axistextsize);
+  $('#i_axistextcolor').val(revert.i_axistextcolor);
+  $('#i_quadrantaxiscolor').val(revert.i_quadrantaxiscolor);
+  $('#i_quadrantaxiswidth').val(revert.i_quadrantaxiswidth);
+  $('#i_defaultdotradius').val(revert.i_defaultdotradius);
+  $('#i_dotminsize').val(revert.i_dotminsize);
+  $('#i_dotmaxsize').val(revert.i_dotmaxsize);
+  $('#i_dotcolor').val(revert.i_dotcolor);
+  $('#i_dotlabel').val(revert.i_dotlabel);
+  $('#i_dotlabelfontsize').val(revert.i_dotlabelfontsize);
+  $('#i_dotlabelfontcolor').val(revert.i_dotlabelfontcolor);
   
 }
 
 function stylesubmit(){
+  $( "#svgcontainer" ).empty();
+
   
+  newsetuparray.height=Number($('#i_height').val());
+  newsetuparray.width=Number($('#i_width').val());
+  newsetuparray.topspace=Number($('#i_topbuffer').val());
+  newsetuparray.bottomspace=Number($('#i_bottombuffer').val());
+  newsetuparray.lbuffer=Number($('#i_leftbuffer').val());
+  newsetuparray.rbuffer=Number($('#i_rightbuffer').val());
+  newsetuparray.title=$('#i_title').val();
+  newsetuparray.titlefontsize=$('#i_titlefontsize').val()+"px";
+  newsetuparray.titlefontcolor=$('#i_titlefontcolor').val();
+  newsetuparray.xlabel=$('#i_xaxislabel').val();
+  newsetuparray.ylabel=$('#i_yaxislabel').val();
+  newsetuparray.axislabelsize=$('#i_axislabelfontsize').val()+"px";
+  newsetuparray.axislabelcolor=$('#i_axislabelcolor').val();
+  newsetuparray.axislineewidth=$('#i_axislineewidth').val()+"px";
+  newsetuparray.axislinecolor=$('#i_axislinecolor').val();
+  newsetuparray.axisopacity=Number($('#i_axisopacity').val());
+  newsetuparray.axistextsize=$('#i_axistextsize').val()+"px";
+  newsetuparray.axistextcolor=$('#i_axistextcolor').val();
+  newsetuparray.quadrantaxiscolor=$('#i_quadrantaxiscolor').val();
+  newsetuparray.quadrantaxiswidth=$('#i_quadrantaxiswidth').val()+"px";
+  newsetuparray.dotRadius=Number($('#i_defaultdotradius').val());
+  newsetuparray.item_min_ptsize=Number($('#i_dotminsize').val());
+  newsetuparray.item_max_ptsize=Number($('#i_dotmaxsize').val());
+  newsetuparray.dotcolor=$('#i_dotcolor').val();
+  newsetuparray.itemslabel=$('#i_dotlabel').val();
+  newsetuparray.itemsfontsize=$('#i_dotlabelfontsize').val()+"px";
+  newsetuparray.itemsfontcolor=$('#i_dotlabelfontcolor').val();
+
+ createQuadrantChart("svgcontainer", newdataarray, newsetuparray);
   
 }
 
@@ -93,12 +168,13 @@ function stylesubmit(){
 
     function submitbtn(){
       
-      $( "svg" ).remove();
-              
-      var newsetuparray={};
+      selectchange=0;
+      
+  $( "#svgcontainer" ).empty();
+
       
     var tablelist='';
-
+    newdataarray=[];
       
     var xval=$("#selectx").val(); 
     var yval=$("#selecty").val();
@@ -113,11 +189,7 @@ function stylesubmit(){
     var geog=$("#selectgeo").val(); 
       
       if(geog=='cc'){sumlev="50";}
-      if(geog=='cp'){
-        sumlev="160";
-      //too many labels
-       newsetuparray.itemslabel='false';
-      }            
+      if(geog=='cp'){sumlev="160";}            
 
       
       var state="8";
@@ -224,7 +296,7 @@ function stylesubmit(){
         
       //console.log(results);
       
-      var newdataarray=[];  
+
       var tempobj={};
       
 
@@ -815,3 +887,14 @@ case 'Wolcott CDP': found = {'pr':'12','w':'','pq':'5','mhiq':'6'}; break;
      
     } //end submitbtn
   
+
+//its go time
+{
+
+  //default as Median HH Income VS Median Home Value
+$('#selectx option:eq(0)').attr('selected', 'selected');
+$('#selecty option:eq(1)').attr('selected', 'selected');
+  
+submitbtn();
+  
+}
