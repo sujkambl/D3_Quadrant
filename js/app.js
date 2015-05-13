@@ -36,7 +36,7 @@ function modal(){
   revert.i_yaxislabel=$('#i_yaxislabel').val();
   revert.i_axislabelfontsize=$('#i_axislabelfontsize').val();
   revert.i_axislabelcolor=$('#i_axislabelcolor').val();
-  revert.i_axislineewidth=$('#i_axislineewidth').val();
+  revert.i_axislinewidth=$('#i_axislinewidth').val();
   revert.i_axislinecolor=$('#i_axislinecolor').val();
   revert.i_axisopacity=$('#i_axisopacity').val();
   revert.i_axistextsize=$('#i_axistextsize').val();
@@ -54,7 +54,7 @@ function modal(){
 $('#modal').modal('toggle');
 }
 
-function reset(){
+function resetform(){
   
   $('#i_height').val("600");
   $('#i_width').val("800");
@@ -62,14 +62,11 @@ function reset(){
   $('#i_bottombuffer').val("60");
   $('#i_leftbuffer').val("100");
   $('#i_rightbuffer').val("40");
-  $('#i_title').val("");
   $('#i_titlefontsize').val("24");
   $('#i_titlefontcolor').val("#000000");
-  $('#i_xaxislabel').val("");
-  $('#i_yaxislabel').val("");
   $('#i_axislabelfontsize').val("20");
   $('#i_axislabelcolor').val("#000000");
-  $('#i_axislineewidth').val("1");
+  $('#i_axislinewidth').val("1");
   $('#i_axislinecolor').val("#000000");
   $('#i_axisopacity').val("0.5");
   $('#i_axistextsize').val("10");
@@ -84,6 +81,11 @@ function reset(){
   $('#i_dotlabelfontsize').val("10");
   $('#i_dotlabelfontcolor').val("#000000");
   
+
+  
+  $('#i_xaxislabel').val(newsetuparray.xlabel);
+  $('#i_yaxislabel').val(newsetuparray.ylabel);      
+  $('#i_title').val(newsetuparray.title);
 }
 
 function cancel(){
@@ -101,7 +103,7 @@ function cancel(){
   $('#i_yaxislabel').val(revert.i_yaxislabel);
   $('#i_axislabelfontsize').val(revert.i_axislabelfontsize);
   $('#i_axislabelcolor').val(revert.i_axislabelcolor);
-  $('#i_axislineewidth').val(revert.i_axislineewidth);
+  $('#i_axislinewidth').val(revert.i_axislinewidth);
   $('#i_axislinecolor').val(revert.i_axislinecolor);
   $('#i_axisopacity').val(revert.i_axisopacity);
   $('#i_axistextsize').val(revert.i_axistextsize);
@@ -119,6 +121,9 @@ function cancel(){
 }
 
 function stylesubmit(){
+  
+  if(document.getElementById('i_height').validity.valid && document.getElementById('i_width').validity.valid && document.getElementById('i_topbuffer').validity.valid && document.getElementById('i_bottombuffer').validity.valid && document.getElementById('i_leftbuffer').validity.valid && document.getElementById('i_rightbuffer').validity.valid && document.getElementById('i_title').validity.valid && document.getElementById('i_titlefontsize').validity.valid && document.getElementById('i_titlefontcolor').validity.valid && document.getElementById('i_xaxislabel').validity.valid && document.getElementById('i_yaxislabel').validity.valid && document.getElementById('i_axislabelfontsize').validity.valid && document.getElementById('i_axislabelcolor').validity.valid && document.getElementById('i_axislinewidth').validity.valid && document.getElementById('i_axislinecolor').validity.valid && document.getElementById('i_axisopacity').validity.valid && document.getElementById('i_axistextsize').validity.valid && document.getElementById('i_axistextcolor').validity.valid && document.getElementById('i_quadrantaxiscolor').validity.valid && document.getElementById('i_quadrantaxiswidth').validity.valid && document.getElementById('i_defaultdotradius').validity.valid && document.getElementById('i_dotminsize').validity.valid && document.getElementById('i_dotmaxsize').validity.valid && document.getElementById('i_dotcolor').validity.valid && document.getElementById('i_dotlabel').validity.valid && document.getElementById('i_dotlabelfontsize').validity.valid && document.getElementById('i_dotlabelfontcolor').validity.valid){
+  
   $( "#svgcontainer" ).empty();
 
   
@@ -135,7 +140,7 @@ function stylesubmit(){
   newsetuparray.ylabel=$('#i_yaxislabel').val();
   newsetuparray.axislabelsize=$('#i_axislabelfontsize').val()+"px";
   newsetuparray.axislabelcolor=$('#i_axislabelcolor').val();
-  newsetuparray.axislineewidth=$('#i_axislineewidth').val()+"px";
+  newsetuparray.axislinewidth=$('#i_axislinewidth').val()+"px";
   newsetuparray.axislinecolor=$('#i_axislinecolor').val();
   newsetuparray.axisopacity=Number($('#i_axisopacity').val());
   newsetuparray.axistextsize=$('#i_axistextsize').val()+"px";
@@ -151,6 +156,12 @@ function stylesubmit(){
   newsetuparray.itemsfontcolor=$('#i_dotlabelfontcolor').val();
 
  createQuadrantChart("svgcontainer", newdataarray, newsetuparray);
+    
+    $('#modal').modal('hide');  
+    
+    //success, create new chart, hide modal
+    
+    }else{console.log('false')}  //form validation failed, nothing happens
   
 }
 
@@ -279,7 +290,10 @@ function stylesubmit(){
 
 
     newsetuparray.title=newsetuparray.xlabel + ' by ' + newsetuparray.ylabel ;
-
+      
+$('#i_xaxislabel').val(newsetuparray.xlabel);
+$('#i_yaxislabel').val(newsetuparray.ylabel);      
+$('#i_title').val(newsetuparray.title);
 //first call query for CO AVG - encapsulate main call
 
     $.get( "../CensusAPI/demog.php?db="+db+"&schema="+schema+"&table="+tablelist+"&geonum=108", function( prelim ) {
