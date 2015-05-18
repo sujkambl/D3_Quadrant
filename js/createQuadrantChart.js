@@ -173,7 +173,7 @@ svg.append("path")
 
 //quadrant axes
 svg.append("path")
-  .attr("d","M"+lbuffer+","+(((y(quadrantyaxis)))+0)+" L"+(width-rbuffer)+","+(((y(quadrantyaxis)+0))))
+  .attr("d","M"+lbuffer+","+(y(quadrantyaxis))+" L"+(width-rbuffer)+","+(y(quadrantyaxis)))
   .attr("stroke", quadrantaxiscolor)
   .attr("stroke-width", quadrantaxiswidth)
   .attr('opacity', quadrantaxisopacity)
@@ -199,7 +199,7 @@ svg.append("path")
  
   var xAxisGroup = svg.append("g") //
     .attr("class", "xaxis")
-    .attr("transform", "translate("+0+"," + (height-topspace) + ")")
+    .attr("transform", "translate("+0+"," + (height-bottomspace) + ")")
     .call(xAxis);
 
       
