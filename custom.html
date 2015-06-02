@@ -20,65 +20,48 @@
       <div class="col-md-3">
         <div id="sidebar">
           <div class="spacerbig"></div>
-          <label for="selectgeo">Geography:</label><br />
-          <select class="varselect" id="selectgeo" tabindex="1">
-            <option value="cc" selected="selected">
-              Colorado Counties
-            </option>
-
-            <option value="cp">
-              Colorado Places
-            </option>
-          </select>
+          
+          <div class="spacerbig"></div>
+          
+          <label for="files">Upload a CSV:</label>
+          <div id="inputs" class="clearfix">
+          <input id="files"  type="file" name="files[]" tabindex="1"/>
+          </div>
+          
+          <div class="hiddendiv" style="display:none;">
 
           <div class="spacerbig"></div><label for="selectx">X Values:</label>
-          <select class="varselect" id="selectx" tabindex="2">
-            </select>
+          <select class="varselect" id="selectx" tabindex="2"></select>
 
-          <div class="spacer"></div><label for="selecty">Y Values:</label> <select class=
-          "varselect" id="selecty" tabindex="3">
-            </select>
+          <div class="spacer"></div><label for="selecty">Y Values:</label> 
+          <select class="varselect" id="selecty" tabindex="3"></select>
 
-          <div class="spacer"></div><label for="selectz">Z Values:</label> <select class=
-          "varselect" id="selectz" tabindex="4">
-            <option value="none" selected="selected">
-              None
-            </option>
+          <div class="spacer"></div><label for="selectz">Z Values:</label> 
+          <select class="varselect" id="selectz" tabindex="4">
+            <option value="none" selected="selected">None</option>
           </select>
 
           <div class="spacer"></div><label for="classify">Color by:</label><br />
           <select class="varselect" id="classify" tabindex="5">
-            <option value="none" selected="selected">
-              None
-            </option>
-
-            <option value="pr">
-              Planning Region
-            </option><!--<option value="w">Watershed</option>-->
-
-            <option value="pq">
-              Population Quantile
-            </option>
-
-            <option value="mhiq">
-              Median HH Income Quantile
-            </option>
-          </select>
+            <option value="none" selected="selected">None</option>
+           </select>
 
           <div class="spacer"></div>
           <div class="spacer"></div>
 
 
-          <button type="button" class="btn" onclick="submitbtn();" tabindex="7" accesskey="s">Submit</button>
-         
+          <button type="button" class="btn" onclick="submitbtn();" tabindex="6" accesskey="s">Submit</button>
+          </div> <!-- end hidden div -->
         </div><!-- end sidebar -->
       </div>
       
       <div class="col-md-9">
+                  <div class="hiddendiv2" style="display:none;">
         <div id="svgcontainer"><svg width="800" height="600"><rect width="800" height="600" style="fill:#fff;stroke-width:2px;stroke:rgb(204, 204, 204)" /></svg></div><br />
                   <div class="spacer"></div>
           <button type="button" id="t_style" class="btn" onclick="modal();" tabindex="6" accesskey="a">Style Options...</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <button type="button" id="t_download" class="btn" onclick="saveSvgAsPng(document.getElementById('svgel'), 'diagram.png');" tabindex="8" accesskey="i">Download PNG</button>
+        </div> <!-- end hidden div 2-->
       </div>
 
     </div><!-- end row -->
@@ -117,6 +100,9 @@
           <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>    
           <tr><td>Default Dot Color:</td><td><input id="i_dotcolor" value="#800000" type="color" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dot Label (true/false):</td><td><input id="i_dotlabel" value="true" type="boolean" /></td></tr>  
           <tr><td>Dot Label Font Size (px):</td><td><input id="i_dotlabelfontsize" value="10" type="number"  min="4" max="50" step="1" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dot Label Font Color:</td><td><input id="i_dotlabelfontcolor" value="#000000" type="color" /></td></tr>  
+          <tr><td>Dot Outline Size (px):</td><td><input id="i_dotoutlinesize" value="0" type="number"  min="0" max="5" step="1" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dot Outline Color:</td><td><input id="i_dotoutlinecolor" value="#000000" type="color" /></td></tr>            
+          <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>  
+          <tr><td>X Axis Decimals:</td><td><input id="i_x_axis_decimals" value="0" type="number"  min="0" max="5" step="1" /></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y Axis Decimals:</td><td><input id="i_y_axis_decimals" value="0" type="number"  min="0" max="5" step="1" /></td></tr>  
         </table>
       </div>
       <div class="modal-footer">
@@ -128,19 +114,16 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
   
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript">
-</script><script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"
-  type="text/javascript">
-</script><script src="http://d3js.org/d3.v3.min.js" type="text/javascript">
-</script><script src="../CensusAPI_Map/assets/js/datatree.js" type="text/javascript">
-</script><script src="js/createQuadrantChart.js" type="text/javascript">  
-</script><script src="js/saveSvgAsPng.js" type="text/javascript">    
-</script><script src="js/app.js" type="text/javascript">
-</script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+  <script src="http://d3js.org/d3.v3.min.js" type="text/javascript"></script>
+  <script src="js/createQuadrantChart.js" type="text/javascript"></script>
+  <script src="js/jquery.csv.js" type="text/javascript"></script>	  
+  <script src="js/saveSvgAsPng.js" type="text/javascript"></script>
+  <script src="js/custom.js" type="text/javascript"></script>
 
   <div id="datadiv">
-    <p><b>Data:</b> <a href="http://www.census.gov/acs/www/" target="_blank">ACS
-    2009-2013 5-Year Estimates</a>&nbsp;&nbsp;&nbsp;<b>Created by:</b> <a href="http://www.colorado.gov/demography" target=
+    <p><b>Created by:</b> <a href="http://www.colorado.gov/demography" target=
     "_blank">Colorado State Demography Office</a>&nbsp;&nbsp;&nbsp;<b>Project Homepage:</b> <a href="https://github.com/royhobbstn/D3_Quadrant" target=
     "_blank">Github: D3 Quadrant Chart</a></p>
   </div>

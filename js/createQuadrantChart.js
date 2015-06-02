@@ -43,7 +43,7 @@ var width = setup.width || 800,
     titlefontcolor = setup.titlefontcolor || '#000000',
     axislabelsize = setup.axislabelsize || '20px',
     axislabelcolor = setup.axislabelcolor || '#000000',
-    colorschemetype = setup.colorschemetype || 'unique'    
+    colorschemetype = setup.colorschemetype || 'none'    
 ;  
 
 
@@ -130,10 +130,10 @@ function sortAlphaNum(a,b) {
   
   //set colorscale type according to sent value of sequential, unique, none  :  may need to add more schemes in future to deal with number of class variability
   var colorscale;
-  if(setup.colorschemetype=="sequential"){colorscale=cquantile};
-  if(setup.colorschemetype=="unique"){colorscale=c20};
-  if(setup.colorschemetype=="none"){colorscale=cnone};  
-  
+  if(colorschemetype=="sequential"){colorscale=cquantile};
+  if(colorschemetype=="unique"){colorscale=c20};
+  if(colorschemetype=="none"){colorscale=cnone};  
+
 }    
   
 //buffer the axis ranges so that points arent on edge of graph  
@@ -242,7 +242,7 @@ items.append("circle")
     return dotcolor;
   }else{
     for(var i=0; i<(newarray.length+1); i=i+1){
-      if(d.category==newarray[i]){return colorscale(d.category);}
+      if(d.category==newarray[i]){return colorscale(i);}
     }
   }
 
