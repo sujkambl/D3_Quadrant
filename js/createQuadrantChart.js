@@ -34,7 +34,7 @@ var width = setup.width || 800,
     axistextcolor = setup.axistextcolor || '#000000',
     item_min_ptsize = setup.item_min_ptsize || 2,
     item_max_ptsize = setup.item_max_ptsize || 10,
-    dotstroke = setup.dotstroke || 'none',
+    dotstroke = setup.dotstroke || '#000000',
     dotstrokewidth = setup.dotstrokewidth || '0px',
     itemslabel = setup.itemslabel || 'true',
     itemsfontsize = setup.itemsfontsize || '10px',
@@ -43,7 +43,7 @@ var width = setup.width || 800,
     titlefontcolor = setup.titlefontcolor || '#000000',
     axislabelsize = setup.axislabelsize || '20px',
     axislabelcolor = setup.axislabelcolor || '#000000',
-    colorschemetype = setup.colorschemetype || 'none'    
+    colorschemetype = setup.colorschemetype || 'unique'    
 ;  
 
 

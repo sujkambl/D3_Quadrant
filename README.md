@@ -29,6 +29,7 @@ var data=[{ label:'Adams', x:56270, y:186600, z:0, category:'5'},
 { label:'Eagle', x:74456, y:453300, z:0, category:'4'},
 { label:'Boulder', x:67956, y:350900, z:0, category:'6'}];
 ```
+Only 'label', 'x', and 'y' are required.  'z' and 'category' are optional, and you can omit them entirely.
 ##What the Setup Object format looks like:
 The setup array is a single object with multiple properties.  For clarity, you may want to write it in the following style:
 ```javascript
@@ -72,7 +73,7 @@ Here is an inventory of possible properties, along with descriptions.  Defaults 
 <b>axistextcolor</b>: Axes unit label text color   *'#000000'*<br />
 <b>item_min_ptsize</b>: If z-values are given, dot minimum size   *2*<br />
 <b>item_max_ptsize</b>: If z-values are given, dot maximum size   *10*<br />
-<b>dotstroke</b>: Dot outline color   *'none'*<br />
+<b>dotstroke</b>: Dot outline color   *'#000000'*<br />
 <b>dotstrokewidth</b>: Dot outline width   *'0px'*<br />
 <b>itemslabel</b>: 'true' or 'false' (as string, not boolean)  Whether dot labels will be on or off   *'true'*<br />
 <b>itemsfontsize</b>: Font size for dot labels   *'10px'*<br />
