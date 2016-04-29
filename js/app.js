@@ -296,7 +296,7 @@ $('#i_yaxislabel').val(newsetuparray.ylabel);
 $('#i_title').val(newsetuparray.title);
 //first call query for CO AVG - encapsulate main call
 
-    $.get( "../CensusAPI/demog.php?db="+db+"&schema="+schema+"&table="+tablelist+"&geonum=108", function( prelim ) {
+    $.get( "https://gis.dola.colorado.gov/capi/demog?db="+db+"&schema="+schema+"&table="+tablelist+"&geonum=108", function( prelim ) {
 
       //get state avg data
           fp=prelim.data[0];       
@@ -304,7 +304,7 @@ $('#i_title').val(newsetuparray.title);
           newsetuparray.quadrantxaxis=((eval(xnumerator))/(eval(xdenominator)));  
           newsetuparray.quadrantyaxis=((eval(ynumerator))/(eval(ydenominator)));    
 
-      $.get( "../CensusAPI/demog.php?db="+db+"&schema="+schema+"&limit="+limit+"&table="+tablelist+"&sumlev="+sumlev+"&state="+state, function( results ) {
+      $.get( "../CensusAPI/capi/demog?db="+db+"&schema="+schema+"&limit="+limit+"&table="+tablelist+"&sumlev="+sumlev+"&state="+state, function( results ) {
       
         //get individual data
         
