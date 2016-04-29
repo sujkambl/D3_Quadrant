@@ -304,7 +304,7 @@ $('#i_title').val(newsetuparray.title);
           newsetuparray.quadrantxaxis=((eval(xnumerator))/(eval(xdenominator)));  
           newsetuparray.quadrantyaxis=((eval(ynumerator))/(eval(ydenominator)));    
 
-      $.get( "../CensusAPI/capi/demog?db="+db+"&schema="+schema+"&limit="+limit+"&table="+tablelist+"&sumlev="+sumlev+"&state="+state, function( results ) {
+      $.get( "https://gis.dola.colorado.gov/capi/demog?db="+db+"&schema="+schema+"&limit="+limit+"&table="+tablelist+"&sumlev="+sumlev+"&state="+state, function( results ) {
       
         //get individual data
         
