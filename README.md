@@ -12,7 +12,7 @@ Load as a Javascript Library
 ##Requirements
 Requires D3.js Library
 ```html
-<script src="http://d3js.org/d3.v3.min.js" type="text/javascript"></script>
+<script src="https://d3js.org/d3.v3.min.js" type="text/javascript"></script>
 ```
 
 ##How to Call

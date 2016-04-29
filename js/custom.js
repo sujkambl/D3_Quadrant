@@ -17,8 +17,8 @@ var rawcsvdata=[];
       // Great success! All the File APIs are supported.
       return true;
     } else {
-      // source: File API availability - http://caniuse.com/#feat=fileapi
-      // source: <output> availability - http://html5doctor.com/the-output-element/
+      // source: File API availability - https://caniuse.com/#feat=fileapi
+      // source: <output> availability - https://html5doctor.com/the-output-element/
       document.writeln('The HTML5 APIs used in this form are only available in the following browsers:<br />');
       // 6.0 File API & 13.0 <output>
       document.writeln(' - Google Chrome: 13.0 or later<br />');
